@@ -7,7 +7,7 @@
   getRecordByFormID    (id: str): IInterface;                                     // gets record by its HEX FormID ('00049BB7')
 
   hasKeyword           (itemRecord: IInterface; keywordEditorID: str): bool;      // checks the provided keyword inside record
-	addKeyword           (itemRecord: IInterface; keyword: IInterface): int;        // adds keyword to the record, if it doesn't have one
+  addKeyword           (itemRecord: IInterface; keyword: IInterface): int;        // adds keyword to the record, if it doesn't have one
   removeKeyword        (itemRecord: IInterface; keywordEditorID: string): bool;   // removess keyword to the record, if it has one, returns true if was found and removed, false if not
 
   createRecord         (recordFile: IwbFile; recordSignature: str): IInterface;   // creates new record inside provided file
@@ -17,14 +17,14 @@
   createRecipe         (itemRecord: IInterface): IInterface;                      // creates COBJ record for item, with referencing on it in amount of 1
   addPerkCondition     (list: IInterface; perk: IInterface): IInterface;          // adds requirement 'HasPerk' to Conditions list
 
-	getPrice             (item: IInterface): integer;                               // gets item value, in invalid/not determined cases will return 0
+  getPrice             (item: IInterface): integer;                               // gets item value, in invalid/not determined cases will return 0
   getMainMaterial      (itemRecord: IInterface): IInterface;                      // will try to figure out right material for provided item record
 
   makeTemperable       (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Temperable
   makeCraftable        (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Craftable at workbenches
 
-	isTemperable         (recordToCheck: IInterface): boolean;                      // determins if item have tempering recipe
-	isCraftable          (recordToCheck: IInterface): boolean;                      // determins if item have crafting recipe
+  isTemperable         (recordToCheck: IInterface): boolean;                      // determins if item have tempering recipe
+  isCraftable          (recordToCheck: IInterface): boolean;                      // determins if item have crafting recipe
 }
 
 
@@ -774,9 +774,9 @@ end;
 procedure FinalizeUtils;
 begin
 	if Assigned(materialKeywordsMap) then
-			materialKeywordsMap.Free;
+	  materialKeywordsMap.Free;
 	if Assigned(materialItemsMap) then
-			materialItemsMap.Free;
+	  materialItemsMap.Free;
 end;
 
 end.
