@@ -1,5 +1,9 @@
 {
   Bunch of Skyrim specific utilits to write scripts on higher level of abstraction.
+	
+	isTemperable         (recordToCheck: IInterface): boolean;                      // determins if item have tempering recipe
+  isCraftable          (recordToCheck: IInterface): boolean;                      // determins if item have crafting recipe
+	isJewelry            (item: IInterface): boolean;                               // shalow way to recognize item as Jewelry
 
   addItem              (list: IInterface; item: IInterface; amount: int) AddedListElement : IInterface;  // adds item to list, like items/Leveled entries
   addToLeveledList     (list: IInterface; entry: IInterface; level: int) AddedListElement : IInterface;  // adds item reference to the leveled list
@@ -22,9 +26,6 @@
 
   makeTemperable       (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Temperable
   makeCraftable        (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Craftable at workbenches
-
-  isTemperable         (recordToCheck: IInterface): boolean;                      // determins if item have tempering recipe
-  isCraftable          (recordToCheck: IInterface): boolean;                      // determins if item have crafting recipe
 }
 
 
@@ -715,6 +716,22 @@ begin
 
   // return created tempering recipe, just in case
   Result := recipeCraft;
+end;
+
+// shalow way to recognize item as Jewelry
+function isJewelry(item: IInterface): boolean;
+begin
+	Result := false;
+
+	if (Signature(item) = 'ARMO') then begin
+		if (
+			hasKeyword(item, 'ArmorJewelry') // ArmorJewelry [KYWD:0006BBE9]
+			or hasKeyword(item, 'VendorItemJewelry') // VendorItemJewelry [KYWD:0008F95A]
+			or hasKeyword(item, 'JewelryExpensive') // JewelryExpensive [KYWD:000A8664]
+		) then begin
+			Result := true;
+		end;
+	end;
 end;
 
 function isTemperable(recordToCheck: IInterface): boolean;
