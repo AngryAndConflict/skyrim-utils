@@ -24,6 +24,8 @@
   getPrice             (item: IInterface): integer;                               // gets item value, in invalid/not determined cases will return 0
   getMainMaterial      (itemRecord: IInterface): IInterface;                      // will try to figure out right material for provided item record
 
+	calcAmountOfMainMaterial(itemRecord: IInterface): Integer;                      // calculates amount of matireal needed to craft an item
+
   makeTemperable       (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Temperable
   makeCraftable        (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Craftable at workbenches
 }
@@ -535,6 +537,20 @@ begin
   Result := recipeTemper;
 end;
 
+function calcAmountOfMainMaterial(itemRecord: IInterface): Integer;
+var
+	itemWeight: IInterface;
+	modifier: integer;
+begin
+	Result := 1;
+	modifier := 0.2;
+
+	itemWeight := GetElementEditValues(itemRecord, 'DATA\Weight');
+	if Assigned(itemWeight) then begin
+		Result := 1 + round(itemWeight * modifier);
+	end;
+end;
+
 // creates new COBJ record to make item Craftable at workbenches
 function makeCraftable(itemRecord: IInterface): IInterface;
 var
@@ -566,10 +582,7 @@ begin
   recipeItems := ElementByPath(recipeCraft, 'items');
 
   // trying to figure out propper requirements amount
-  amountOfMainComponent := 1 + round(
-    GetElementEditValues(itemRecord, 'DATA\Weight')
-    * 0.2
-  );
+  amountOfMainComponent := calcAmountOfMainMaterial(itemRecord);
   amountOfAdditionalComponent := round(amountOfMainComponent / 3);
   if amountOfAdditionalComponent < 1 then
     amountOfAdditionalComponent := 1;
@@ -638,23 +651,25 @@ begin
     for i := 0 to ElementCount(tmpKeywordsCollection) - 1 do begin
       currentKeywordEDID := GetElementEditValues(LinksTo(ElementByIndex(tmpKeywordsCollection, i)), 'EDID');
 
-      if (currentKeywordEDID = 'ArmorMaterialSteel'
-        or currentKeywordEDID = 'ArmorMaterialSteel'
-        or currentKeywordEDID = 'DLC2ArmorMaterialBonemoldLight'
-        or currentKeywordEDID = 'DLC2ArmorMaterialBonemoldHeavy'
-        or currentKeywordEDID = 'ArmorMaterialImperialHeavy'
-        or currentKeywordEDID = 'ArmorMaterialImperialLight'
-        or currentKeywordEDID = 'ArmorMaterialStormcloak'
-        or currentKeywordEDID = 'ArmorMaterialImperialStudded'
-        or currentKeywordEDID = 'DLC1ArmorMaterialDawnguard'
+     if (
+		   (currentKeywordEDID = 'ArmorMaterialSteel')
+        or (currentKeywordEDID = 'ArmorMaterialSteel')
+        or (currentKeywordEDID = 'DLC2ArmorMaterialBonemoldLight')
+        or (currentKeywordEDID = 'DLC2ArmorMaterialBonemoldHeavy')
+        or (currentKeywordEDID = 'ArmorMaterialImperialHeavy')
+        or (currentKeywordEDID = 'ArmorMaterialImperialLight')
+        or (currentKeywordEDID = 'ArmorMaterialStormcloak')
+        or (currentKeywordEDID = 'ArmorMaterialImperialStudded')
+        or (currentKeywordEDID = 'DLC1ArmorMaterialDawnguard')
       ) then begin
         addPerkCondition(recipeCraft, getRecordByFormID('000CB40D')); // SteelSmithing
         Break;
 
-      end else if (currentKeywordEDID = 'ArmorMaterialScaled'
-        or currentKeywordEDID = 'DLC2ArmorMaterialNordicLight'
-        or currentKeywordEDID = 'DLC2ArmorMaterialNordicHeavy'
-        or currentKeywordEDID = 'ArmorMaterialSteelPlate'
+      end else if (
+			  (currentKeywordEDID = 'ArmorMaterialScaled')
+        or (currentKeywordEDID = 'DLC2ArmorMaterialNordicLight')
+        or (currentKeywordEDID = 'DLC2ArmorMaterialNordicHeavy')
+        or (currentKeywordEDID = 'ArmorMaterialSteelPlate')
       ) then begin
         addPerkCondition(recipeCraft, getRecordByFormID('000CB414')); // AdvancedArmors
         Break;
@@ -663,9 +678,10 @@ begin
         addPerkCondition(recipeCraft, getRecordByFormID('000CB40E')); // DwarvenSmithing
         Break;
 
-      end else if (currentKeywordEDID = 'ArmorMaterialEbony'
-        or currentKeywordEDID = 'DLC2ArmorMaterialStalhrimLight'
-        or currentKeywordEDID = 'DLC2ArmorMaterialStalhrimHeavy'
+      end else if (
+			  (currentKeywordEDID = 'ArmorMaterialEbony')
+        or (currentKeywordEDID = 'DLC2ArmorMaterialStalhrimLight')
+        or (currentKeywordEDID = 'DLC2ArmorMaterialStalhrimHeavy')
       ) then begin
         addPerkCondition(recipeCraft, getRecordByFormID('000CB412')); // EbonySmithing
         Break;
@@ -680,13 +696,16 @@ begin
         addPerkCondition(recipeCraft, getRecordByFormID('000CB411')); // GlassSmithing
         Break;
 
-      end else if (currentKeywordEDID = 'ArmorMaterialDragonscale' or currentKeywordEDID = 'ArmorMaterialDragonplate') then begin
+      end else if (
+				(currentKeywordEDID = 'ArmorMaterialDragonscale')
+				or (currentKeywordEDID = 'ArmorMaterialDragonplate')) then begin
         addPerkCondition(recipeCraft, getRecordByFormID('00052190')); // DragonArmor
         Break;
-      end else if (currentKeywordEDID = 'ArmorMaterialElven'
-        or currentKeywordEDID = 'ArmorMaterialElvenGilded'
-        or currentKeywordEDID = 'DLC2ArmorMaterialChitinLight'
-        or currentKeywordEDID = 'DLC2ArmorMaterialChitinHeavy'
+      end else if (
+				(currentKeywordEDID = 'ArmorMaterialElven')
+        or (currentKeywordEDID = 'ArmorMaterialElvenGilded')
+        or (currentKeywordEDID = 'DLC2ArmorMaterialChitinLight')
+        or (currentKeywordEDID = 'DLC2ArmorMaterialChitinHeavy')
       ) then begin
         addPerkCondition(recipeCraft, getRecordByFormID('000CB40F')); // ElvenSmithing
         Break;
