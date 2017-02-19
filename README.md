@@ -21,6 +21,8 @@ Currently Script generates 31 enchanted copies of selected weapons per each, add
 Determins if item have tempering recipe.
 #### isCraftable(recordToCheck: IInterface): boolean;
 Determins if item have crafting recipe.
+#### isJewelry(item: IInterface): boolean;
+Shalow way to recognize item as Jewelry.
 
 #### addItem(list: IInterface; item: IInterface; amount: int) AddedListElement : IInterface;
 Adds item to list/collection, like items/Leveled entries.
