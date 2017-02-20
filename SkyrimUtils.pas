@@ -1,12 +1,13 @@
 {
   Bunch of Skyrim specific utilits to write scripts on higher level of abstraction.
 	
-	isTemperable         (recordToCheck: IInterface): boolean;                      // determins if item have tempering recipe
+  isTemperable         (recordToCheck: IInterface): boolean;                      // determins if item have tempering recipe
   isCraftable          (recordToCheck: IInterface): boolean;                      // determins if item have crafting recipe
-	isJewelry            (item: IInterface): boolean;                               // shalow way to recognize item as Jewelry
+  isJewelry            (item: IInterface): boolean;                               // shalow way to recognize item as Jewelry
+  isStaff              (item: IInterface): boolean;                               // shalow way to recognize item as Staff
 
-  addItem              (list: IInterface; item: IInterface; amount: int) AddedListElement : IInterface;  // adds item to list, like items/Leveled entries
-  addToLeveledList     (list: IInterface; entry: IInterface; level: int) AddedListElement : IInterface;  // adds item reference to the leveled list
+  addItem              (list: IInterface; item: IInterface; amount: int) AddedListElement: IInterface;  // adds item to list, like items/Leveled entries
+  addToLeveledList     (list: IInterface; entry: IInterface; level: int) AddedListElement: IInterface;  // adds item reference to the leveled list
 
   getRecordByFormID    (id: str): IInterface;                                     // gets record by its HEX FormID ('00049BB7')
 
@@ -145,10 +146,8 @@ begin
 
     materialKeywordsMap.Add('DLC1ArmorMaterialDawnguard'); materialItemsMap.Add('0005ACE5'); // IngotSteel
 
-
     // DLC1ArmorMaterialHunter - not temperable/craftable ? O_o
     // DLC1ArmorMaterialVampire - not temperable/craftable ? O_o
-
   end;
 end;
 
@@ -749,6 +748,28 @@ begin
 			Result := true;
 		end;
 	end;
+end;
+
+// shalow way to recognize item as Staff
+function isStaff(item: IInterface): boolean;
+var
+  tmp: IInterface;
+begin
+  Result := false;
+
+  if (Signature(item) = 'WEAP') then begin
+    // WeapTypeStaff [KYWD:0001E716]     VendorItemStaff [KYWD:000937A4]
+    if ( hasKeyword(item, 'WeapTypeStaff') or hasKeyword(item, 'VendorItemStaff') ) then begin
+      Result := true;
+    end else begin
+      tmp := GetElementEditValues(item, 'DNAM\Animation Type');
+      if Assigned(tmp) then begin
+        if (tmp = 'Staff') then begin
+          Result := true;
+        end;
+      end;
+    end;
+  end;
 end;
 
 function isTemperable(recordToCheck: IInterface): boolean;
