@@ -23,6 +23,8 @@ Determins if item have tempering recipe.
 Determins if item have crafting recipe.
 #### isJewelry(item: IInterface): boolean;
 Shalow way to recognize item as Jewelry.
+#### isStaff(item: IInterface): boolean;
+Shalow way to recognize item as Staff.
 
 #### addItem(list: IInterface; item: IInterface; amount: int) AddedListElement : IInterface;
 Adds item to list/collection, like items/Leveled entries.
