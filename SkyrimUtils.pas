@@ -25,7 +25,7 @@
   getPrice             (item: IInterface): integer;                               // gets item value, in invalid/not determined cases will return 0
   getMainMaterial      (itemRecord: IInterface): IInterface;                      // will try to figure out right material for provided item record
 
-	calcAmountOfMainMaterial(itemRecord: IInterface): Integer;                      // calculates amount of matireal needed to craft an item
+  calcAmountOfMainMaterial(itemRecord: IInterface): Integer;                      // calculates amount of matireal needed to craft an item
 
   makeTemperable       (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Temperable
   makeCraftable        (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Craftable at workbenches
@@ -96,7 +96,7 @@ begin
 
     materialKeywordsMap.Add('DLC1ArmorMaterielFalmerHeavyOriginal'); materialItemsMap.Add('0003AD57'); // ChaurusChitin
     materialKeywordsMap.Add('DLC1ArmorMaterielFalmerHeavy'); materialItemsMap.Add('0003AD57'); // ChaurusChitin
-		materialKeywordsMap.Add('DLC1ArmorMaterialFalmerHardened'); materialItemsMap.Add('0003AD57'); // ChaurusChitin
+    materialKeywordsMap.Add('DLC1ArmorMaterialFalmerHardened'); materialItemsMap.Add('0003AD57'); // ChaurusChitin
     materialKeywordsMap.Add('ArmorMaterialFalmer'); materialItemsMap.Add('0003AD57'); // ChaurusChitin
 
     materialKeywordsMap.Add('DLC2ArmorMaterialBonemoldLight'); materialItemsMap.Add('0401CD7C'); // DLC2NetchLeather
@@ -110,22 +110,22 @@ begin
 
     materialKeywordsMap.Add('DLC2ArmorMaterialNordicHeavy'); materialItemsMap.Add('0005ADA0'); // IngotQuicksilver
     materialKeywordsMap.Add('DLC2ArmorMaterialNordicLight'); materialItemsMap.Add('0005ADA0'); // IngotQuicksilver
-		materialKeywordsMap.Add('ArmorMaterialElvenGilded'); materialItemsMap.Add('0005ADA0'); // IngotQuicksilver
+    materialKeywordsMap.Add('ArmorMaterialElvenGilded'); materialItemsMap.Add('0005ADA0'); // IngotQuicksilver
 
     materialKeywordsMap.Add('DLC2ArmorMaterialMoragTong'); materialItemsMap.Add('000DB5D2'); // Leather01
     materialKeywordsMap.Add('ArmorMaterialLeather'); materialItemsMap.Add('000DB5D2'); // Leather01
-		materialKeywordsMap.Add('ArmorMaterialHide'); materialItemsMap.Add('000DB5D2'); // Leather01
-		materialKeywordsMap.Add('ArmorMaterialForsworn'); materialItemsMap.Add('000DB5D2'); // Leather01
-		materialKeywordsMap.Add('ArmorMaterialMS02Forsworn'); materialItemsMap.Add('000DB5D2'); // Leather01
-		materialKeywordsMap.Add('ArmorMaterialThievesGuild'); materialItemsMap.Add('000DB5D2'); // Leather01
+    materialKeywordsMap.Add('ArmorMaterialHide'); materialItemsMap.Add('000DB5D2'); // Leather01
+    materialKeywordsMap.Add('ArmorMaterialForsworn'); materialItemsMap.Add('000DB5D2'); // Leather01
+    materialKeywordsMap.Add('ArmorMaterialMS02Forsworn'); materialItemsMap.Add('000DB5D2'); // Leather01
+    materialKeywordsMap.Add('ArmorMaterialThievesGuild'); materialItemsMap.Add('000DB5D2'); // Leather01
     materialKeywordsMap.Add('ArmorMaterialThievesGuildLeader'); materialItemsMap.Add('000DB5D2'); // Leather01
 
     materialKeywordsMap.Add('ArmorMaterialSilver'); materialItemsMap.Add('0005ACE3'); // IngotSilver
     materialKeywordsMap.Add('ArmorMaterialGlass'); materialItemsMap.Add('0005ADA1'); // IngotMalachite
 
     materialKeywordsMap.Add('ArmorMaterialEbony'); materialItemsMap.Add('0005AD9D'); // IngotEbony
-		materialKeywordsMap.Add('ArmorMaterialBlades'); materialItemsMap.Add('0005AD9D'); // IngotEbony
-		materialKeywordsMap.Add('ArmorMaterialDaedric'); materialItemsMap.Add('0005AD9D'); // IngotEbony
+    materialKeywordsMap.Add('ArmorMaterialBlades'); materialItemsMap.Add('0005AD9D'); // IngotEbony
+    materialKeywordsMap.Add('ArmorMaterialDaedric'); materialItemsMap.Add('0005AD9D'); // IngotEbony
     materialKeywordsMap.Add('ArmorNightingale'); materialItemsMap.Add('0005AD9D'); // IngotEbony
 	
     materialKeywordsMap.Add('ArmorMaterialDwarven'); materialItemsMap.Add('000DB8A2'); // IngotDwarven
@@ -134,14 +134,14 @@ begin
     materialKeywordsMap.Add('ArmorMaterialDragonplate'); materialItemsMap.Add('0003ADA4'); // DragonBone
 
     materialKeywordsMap.Add('ArmorMaterialSteel'); materialItemsMap.Add('0005ACE5'); // IngotSteel
-		materialKeywordsMap.Add('ArmorMaterialSteelPlate'); materialItemsMap.Add('0005ACE5'); // IngotSteel
+    materialKeywordsMap.Add('ArmorMaterialSteelPlate'); materialItemsMap.Add('0005ACE5'); // IngotSteel
 
     materialKeywordsMap.Add('ArmorMaterialImperialHeavy'); materialItemsMap.Add('0005ACE5'); // IngotSteel
-		materialKeywordsMap.Add('ArmorMaterialImperialLight'); materialItemsMap.Add('0005ACE5'); // IngotSteel
+    materialKeywordsMap.Add('ArmorMaterialImperialLight'); materialItemsMap.Add('0005ACE5'); // IngotSteel
     materialKeywordsMap.Add('ArmorMaterialPenitus'); materialItemsMap.Add('0005ACE5'); // IngotSteel
-		materialKeywordsMap.Add('ArmorMaterialImperialStudded'); materialItemsMap.Add('0005ACE5'); // IngotSteel
+    materialKeywordsMap.Add('ArmorMaterialImperialStudded'); materialItemsMap.Add('0005ACE5'); // IngotSteel
 
-		materialKeywordsMap.Add('ArmorMaterialStormcloak'); materialItemsMap.Add('0005ACE5'); // IngotSteel
+    materialKeywordsMap.Add('ArmorMaterialStormcloak'); materialItemsMap.Add('0005ACE5'); // IngotSteel
     materialKeywordsMap.Add('ArmorMaterialBearStormcloak'); materialItemsMap.Add('0005ACE5'); // IngotSteel
 
     materialKeywordsMap.Add('DLC1ArmorMaterialDawnguard'); materialItemsMap.Add('0005ACE5'); // IngotSteel
@@ -225,17 +225,17 @@ begin
   Result := false;
 
   if hasKeyword(itemRecord, keywordEditorID) then begin
-      // get all keyword entries of provided record
-      tmpKeywordsCollection := ElementByPath(itemRecord, 'KWDA');
-      // loop through each
-      for i := 0 to ElementCount(tmpKeywordsCollection) - 1 do begin
-        keywordRef := LinksTo(ElementByIndex(tmpKeywordsCollection, i));
-        if GetElementEditValues(keywordRef, 'EDID') = keywordEditorID then begin
-          RemoveByIndex(tmpKeywordsCollection, i, true);
-          Result := true;
-          Break;
-        end;
+    // get all keyword entries of provided record
+    tmpKeywordsCollection := ElementByPath(itemRecord, 'KWDA');
+    // loop through each
+    for i := 0 to ElementCount(tmpKeywordsCollection) - 1 do begin
+      keywordRef := LinksTo(ElementByIndex(tmpKeywordsCollection, i));
+      if GetElementEditValues(keywordRef, 'EDID') = keywordEditorID then begin
+        RemoveByIndex(tmpKeywordsCollection, i, true);
+        Result := true;
+        Break;
       end;
+    end;
   end;
 end;
 
@@ -420,14 +420,14 @@ end;
 // gets price value of item
 function getPrice(item: IInterface): integer;
 var
-	tmp: integer;
+  tmp: integer;
 begin
-	Result := 0;
-	tmp := GetElementEditValues(item, 'DATA\Value');
+  Result := 0;
+  tmp := GetElementEditValues(item, 'DATA\Value');
 
-	if Assigned(tmp) then begin
-		Result := tmp;
-	end;
+  if Assigned(tmp) then begin
+    Result := tmp;
+  end;
 end;
 
 // will try to figure out right material for provided item record
@@ -538,14 +538,14 @@ end;
 
 function calcAmountOfMainMaterial(itemRecord: IInterface): Integer;
 var
-	itemWeight: IInterface;
+  itemWeight: IInterface;
 begin
-	Result := 1;
+  Result := 1;
 
-	itemWeight := GetElementEditValues(itemRecord, 'DATA\Weight');
-	if Assigned(itemWeight) then begin
-		Result := 1 + round(itemWeight * 0.2);
-	end;
+  itemWeight := GetElementEditValues(itemRecord, 'DATA\Weight');
+  if Assigned(itemWeight) then begin
+    Result := 1 + round(itemWeight * 0.2);
+  end;
 end;
 
 // creates new COBJ record to make item Craftable at workbenches
@@ -617,7 +617,7 @@ begin
         Break;
       end else if (currentKeywordEDID = 'WeapMaterialEbony') then begin
         addPerkCondition(recipeCraft, getRecordByFormID('000CB412')); // EbonySmithing
-	      Break;
+        Break;
 
       end else if (currentKeywordEDID = 'WeapMaterialDaedric') then begin
         addPerkCondition(recipeCraft, getRecordByFormID('000CB413')); // DaedricSmithing
@@ -649,7 +649,7 @@ begin
       currentKeywordEDID := GetElementEditValues(LinksTo(ElementByIndex(tmpKeywordsCollection, i)), 'EDID');
 
      if (
-		   (currentKeywordEDID = 'ArmorMaterialSteel')
+        (currentKeywordEDID = 'ArmorMaterialSteel')
         or (currentKeywordEDID = 'ArmorMaterialSteel')
         or (currentKeywordEDID = 'DLC2ArmorMaterialBonemoldLight')
         or (currentKeywordEDID = 'DLC2ArmorMaterialBonemoldHeavy')
@@ -663,7 +663,7 @@ begin
         Break;
 
       end else if (
-			  (currentKeywordEDID = 'ArmorMaterialScaled')
+        (currentKeywordEDID = 'ArmorMaterialScaled')
         or (currentKeywordEDID = 'DLC2ArmorMaterialNordicLight')
         or (currentKeywordEDID = 'DLC2ArmorMaterialNordicHeavy')
         or (currentKeywordEDID = 'ArmorMaterialSteelPlate')
@@ -676,7 +676,7 @@ begin
         Break;
 
       end else if (
-			  (currentKeywordEDID = 'ArmorMaterialEbony')
+        (currentKeywordEDID = 'ArmorMaterialEbony')
         or (currentKeywordEDID = 'DLC2ArmorMaterialStalhrimLight')
         or (currentKeywordEDID = 'DLC2ArmorMaterialStalhrimHeavy')
       ) then begin
@@ -694,12 +694,12 @@ begin
         Break;
 
       end else if (
-				(currentKeywordEDID = 'ArmorMaterialDragonscale')
+        (currentKeywordEDID = 'ArmorMaterialDragonscale')
 				or (currentKeywordEDID = 'ArmorMaterialDragonplate')) then begin
         addPerkCondition(recipeCraft, getRecordByFormID('00052190')); // DragonArmor
         Break;
       end else if (
-				(currentKeywordEDID = 'ArmorMaterialElven')
+        (currentKeywordEDID = 'ArmorMaterialElven')
         or (currentKeywordEDID = 'ArmorMaterialElvenGilded')
         or (currentKeywordEDID = 'DLC2ArmorMaterialChitinLight')
         or (currentKeywordEDID = 'DLC2ArmorMaterialChitinHeavy')
@@ -737,17 +737,17 @@ end;
 // shalow way to recognize item as Jewelry
 function isJewelry(item: IInterface): boolean;
 begin
-	Result := false;
+  Result := false;
 
-	if (Signature(item) = 'ARMO') then begin
-		if (
-			hasKeyword(item, 'ArmorJewelry') // ArmorJewelry [KYWD:0006BBE9]
-			or hasKeyword(item, 'VendorItemJewelry') // VendorItemJewelry [KYWD:0008F95A]
-			or hasKeyword(item, 'JewelryExpensive') // JewelryExpensive [KYWD:000A8664]
-		) then begin
-			Result := true;
-		end;
-	end;
+  if (Signature(item) = 'ARMO') then begin
+    if (
+      hasKeyword(item, 'ArmorJewelry') // ArmorJewelry [KYWD:0006BBE9]
+      or hasKeyword(item, 'VendorItemJewelry') // VendorItemJewelry [KYWD:0008F95A]
+      or hasKeyword(item, 'JewelryExpensive') // JewelryExpensive [KYWD:000A8664]
+    ) then begin
+      Result := true;
+    end;
+  end;
 end;
 
 // shalow way to recognize item as Staff
@@ -774,64 +774,64 @@ end;
 
 function isTemperable(recordToCheck: IInterface): boolean;
 var
-	i: integer;
-	tmp, bnam: IInterface;
+  i: integer;
+  tmp, bnam: IInterface;
 begin
-	Result := false;
+  Result := false;
 
-	for i := 0 to ReferencedByCount(recordToCheck) - 1 do begin
-		tmp := ReferencedByIndex(recordToCheck, i);
+  for i := 0 to ReferencedByCount(recordToCheck) - 1 do begin
+    tmp := ReferencedByIndex(recordToCheck, i);
 
-		if (Signature(tmp) = 'COBJ') then begin
-			if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
-				bnam := GetElementEditValues(tmp, 'BNAM');
-				if (
-					(bnam = 'CraftingSmithingSharpeningWheel [KYWD:00088108]')
-					or (bnam = 'CraftingSmithingArmorTable [KYWD:000ADB78]')
-				) then begin
-					Result := true;
-					Break
-				end;
-			end;
-		end;
+    if (Signature(tmp) = 'COBJ') then begin
+      if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
+        bnam := GetElementEditValues(tmp, 'BNAM');
+        if (
+          (bnam = 'CraftingSmithingSharpeningWheel [KYWD:00088108]')
+          or (bnam = 'CraftingSmithingArmorTable [KYWD:000ADB78]')
+        ) then begin
+          Result := true;
+          Break
+        end;
+      end;
+    end;
 
-	end;
+  end;
 end;
 
 function isCraftable(recordToCheck: IInterface): boolean;
 var
-	i: integer;
-	tmp, bnam: IInterface;
+  i: integer;
+  tmp, bnam: IInterface;
 begin
-	Result := false;
+  Result := false;
 
-	for i := 0 to ReferencedByCount(recordToCheck) - 1 do begin
-		tmp := ReferencedByIndex(recordToCheck, i);
+  for i := 0 to ReferencedByCount(recordToCheck) - 1 do begin
+    tmp := ReferencedByIndex(recordToCheck, i);
 
-		if (Signature(tmp) = 'COBJ') then begin
-			if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
-				bnam := GetElementEditValues(tmp, 'BNAM');
-				if (
-					(bnam = 'CraftingSmithingForge [KYWD:00088105]')
-					or (bnam = 'CraftingSmelter [KYWD:000A5CCE]')
-					or (bnam = 'CraftingTanningRack [KYWD:0007866A]')
-				) then begin
-					Result := true;
-					Break
-				end;
+    if (Signature(tmp) = 'COBJ') then begin
+      if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
+        bnam := GetElementEditValues(tmp, 'BNAM');
+        if (
+          (bnam = 'CraftingSmithingForge [KYWD:00088105]')
+          or (bnam = 'CraftingSmelter [KYWD:000A5CCE]')
+          or (bnam = 'CraftingTanningRack [KYWD:0007866A]')
+        ) then begin
+          Result := true;
+          Break
+        end;
 
-			end;
-		end;
+      end;
+    end;
 
-	end;
+  end;
 end;
 
 procedure FinalizeUtils;
 begin
-	if Assigned(materialKeywordsMap) then
-	  materialKeywordsMap.Free;
-	if Assigned(materialItemsMap) then
-	  materialItemsMap.Free;
+  if Assigned(materialKeywordsMap) then
+    materialKeywordsMap.Free;
+  if Assigned(materialItemsMap) then
+    materialItemsMap.Free;
 end;
 
 end.
