@@ -18,13 +18,29 @@ Currently Script generates 31 enchanted copies of selected weapons per each, add
 
 ## SkyrimUtils functions
 #### isTemperable(recordToCheck: IInterface): boolean;
-Determins if item have tempering recipe.
+Determins if item has a tempering recipe. Note: it is looking by "Referenced By", so if item originates inside Skyrim.esm, you have to "build" Skyrim.esm's reference before running script, or function result can be compromised.
+``` pascal
+if isTemperable(getRecordByFormID('020023EF')) then
+  AddMessage('Already temperable item: ' + Name(getRecordByFormID('020023EF')));
+```
 #### isCraftable(recordToCheck: IInterface): boolean;
-Determins if item have crafting recipe.
+Determins if item has a crafting recipe. Note: it is looking by "Referenced By", so if item originates inside Skyrim.esm, you have to "build" Skyrim.esm's reference before running script, or function result can be compromised.
+``` pascal
+if isCraftable(getRecordByFormID('02000801')) then
+  AddMessage('Already craftable item: ' + Name(getRecordByFormID('02000801')));
+```
 #### isJewelry(item: IInterface): boolean;
 Shalow way to recognize item as Jewelry.
+``` pascal
+isJewelry(getRecordByFormID('0200488A')) // DLC1ReflectingShield --> false
+isJewelry(getRecordByFormID('020068AE')) // DLC1nVampireNightPowerNecklaceBats --> true
+```
 #### isStaff(item: IInterface): boolean;
 Shalow way to recognize item as Staff.
+``` pascal
+isStaff(getRecordByFormID('0200488A')) // DLC1ReflectingShield --> false
+isStaff(getRecordByFormID('02011D5F')) // DLC1StaffFalmerIceStorm --> true
+```
 
 #### addItem(list: IInterface; item: IInterface; amount: int) AddedListElement : IInterface;
 Adds item to list/collection, like items/Leveled entries.
@@ -59,5 +75,13 @@ Creates COBJ record for item, with referencing on it in amount of 1.
 
 #### makeTemperable(itemRecord: IInterface): IInterface;
 Creates new COBJ record to make item Temperable.
+```pascal
+if not ( isTemperable(getRecordByFormID('02000801')) ) then
+  makeTemperable(getRecordByFormID('02000801');
+```
 #### makeCraftable(itemRecord: IInterface): IInterface;
 Creates new COBJ record to make item Craftable at workbenches.
+```pascal
+if not ( isCraftable(getRecordByFormID('02000801')) ) then
+  makeCraftable(getRecordByFormID('02000801');
+```
