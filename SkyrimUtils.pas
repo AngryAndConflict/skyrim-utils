@@ -45,7 +45,11 @@ const
   WEAPON_CRAFTING_WORKBENCH_FORM_ID = '00088105'; // CraftingSmithingForge
   // FormID of Keyword, used for Armor Crafting COBJ records in Skyrim
   ARMOR_CRAFTING_WORKBENCH_FORM_ID = '00088105'; // CraftingSmithingForge
-
+  
+  // Filtering Rules
+  SIGNATURES_ALLOWED_TO_BE_IN_LEVELED_LISTS = 'WEAP ARMO AMMO ALCH LVLI LVLN LVSP SPEL BOOK MISC KEYM NPC_';
+  SIGNATURES_ALLOWED_TO_BE_IN_CONTAINER = 'WEAP ARMO AMMO ALCH LVLI BOOK MISC KEYM';
+  
 var
   isUtilsInitialized: boolean;
   materialKeywordsMap: TStringList;
