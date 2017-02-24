@@ -20,8 +20,9 @@
   removeInvalidEntries (rec: IInterface);                                         // removes invalid entries from containers and recipe items, from Leveled lists, npcs and spells, based on 'Skyrim - Remove invalid entries'
 
   createRecipe         (itemRecord: IInterface): IInterface;                      // creates COBJ record for item, with referencing on it in amount of 1
-  addPerkCondition     (list: IInterface; perk: IInterface): IInterface;          // adds requirement 'HasPerk' to Conditions list
-
+  addPerkCondition     (listOrRecord: IInterface; perk: IInterface): IInterface;  // adds requirement 'HasPerk' to Conditions list or record
+  addHasItemCondition  (listOrRecord: IInterface; item: IInterface): IInterface;  // adds conditions to record or list, defining that player has got an item in inventory
+  
   getPrice             (item: IInterface): integer;                               // gets item value, in invalid/not determined cases will return 0
   getMainMaterial      (itemRecord: IInterface): IInterface;                      // will try to figure out right material for provided item record
 
@@ -415,6 +416,74 @@ begin
   SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
   // don't know what is this, but it should be equal to -1, if Function Runs On Subject
   SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
+
+  // remove nil records from list
+  removeInvalidEntries(list);
+
+  Result := newCondition;
+end;
+
+// adds conditions defining that player has got an item in inventory
+function addHasItemCondition(list: IInterface; item: IInterface): IInterface;
+var
+  newCondition, tmp: IInterface;
+  itemSignature: string;
+begin
+  if not (Name(list) = 'Conditions') then begin
+    if Signature(list) = 'COBJ' then begin // record itself was provided
+      tmp := ElementByPath(list, 'Conditions');
+      if not Assigned(tmp) then begin
+        Add(list, 'Conditions', true);
+        list := ElementByPath(list, 'Conditions');
+        newCondition := ElementByIndex(list, 0); // xEdit will create dummy condition if new list was added
+      end else begin
+        list := tmp;
+      end;
+    end;
+  end;
+
+  if not Assigned(newCondition) then begin
+    // create condition
+    newCondition := ElementAssign(list, HighInteger, nil, false);
+  end;
+
+  // set type to Greater than / Or equal to
+  SetElementEditValues(newCondition, 'CTDA - \Type', '11000000');
+  // set some needed properties
+  SetElementEditValues(newCondition, 'CTDA - \Comparison Value', '1');
+  SetElementEditValues(newCondition, 'CTDA - \Function', 'GetItemCount');
+  SetElementEditValues(newCondition, 'CTDA - \Inventory Object', Name(item));
+  SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
+  // don't know what is this, but it should be equal to -1, if Function Runs On Subject
+  SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
+
+  // WEAP and ARMO can be equiped, if so, should also trigger condition to have more than one item in inventory
+  // NOTE: onehanded weapons or jewelry, can be equiped at multiple slots, but can't filter that out
+  itemSignature := Signature(item);
+  if ((itemSignature = 'WEAP') or (itemSignature = 'ARMO')) then begin
+    newCondition := ElementAssign(list, HighInteger, nil, false);
+    // set type to Equal to / Or
+    SetElementEditValues(newCondition, 'CTDA - \Type', '10010000');
+
+    // set some needed properties
+    SetElementEditValues(newCondition, 'CTDA - \Comparison Value', '0');
+    SetElementEditValues(newCondition, 'CTDA - \Function', 'GetEquipped');
+    SetElementEditValues(newCondition, 'CTDA - \Inventory Object', Name(item));
+    SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
+    // don't know what is this, but it should be equal to -1, if Function Runs On Subject
+    SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
+
+    newCondition := ElementAssign(list, HighInteger, nil, false);
+    // set type to Greater than / Or equal to
+    SetElementEditValues(newCondition, 'CTDA - \Type', '11000000');
+    // set some needed properties
+    SetElementEditValues(newCondition, 'CTDA - \Comparison Value', '2');
+    SetElementEditValues(newCondition, 'CTDA - \Function', 'GetItemCount');
+    SetElementEditValues(newCondition, 'CTDA - \Inventory Object', Name(item));
+    SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
+    // don't know what is this, but it should be equal to -1, if Function Runs On Subject
+    SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
+  end;
 
   // remove nil records from list
   removeInvalidEntries(list);
