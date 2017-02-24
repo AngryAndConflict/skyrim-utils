@@ -87,3 +87,5 @@ Creates new COBJ record to make item Craftable at workbenches.
 if not ( isCraftable(getRecordByFormID('02000801')) ) then
   makeCraftable(getRecordByFormID('02000801');
 ```
+#### makeBreakdown(item: IInterface): IInterface;
+Creates new COBJ record to allow breaking item to its main original material with propper amount.
