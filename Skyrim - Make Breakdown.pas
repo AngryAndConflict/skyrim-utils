@@ -18,7 +18,7 @@ end;
 // runs in the end
 function Finalize: integer;
 begin
-	FinalizeUtils();
+  FinalizeUtils();
   AddMessage('---Greenish Skyrim for everybody!---');
   Result := 0;
 end;
