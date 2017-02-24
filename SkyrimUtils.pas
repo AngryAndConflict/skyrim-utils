@@ -26,10 +26,11 @@
   getPrice             (item: IInterface): integer;                               // gets item value, in invalid/not determined cases will return 0
   getMainMaterial      (itemRecord: IInterface): IInterface;                      // will try to figure out right material for provided item record
 
-  calcAmountOfMainMaterial(itemRecord: IInterface): Integer;                      // calculates amount of matireal needed to craft an item
+  calcAmountOfMainMaterial(itemRecord: IInterface): Integer;                      // calculates amount of material needed to craft an item
 
   makeTemperable       (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Temperable
   makeCraftable        (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Craftable at workbenches
+  makeBreakdown        (item: IInterface): IInterface;                            // creates new COBJ record to allow breaking item to its material
 }
 
 
@@ -783,7 +784,6 @@ begin
       end;
 
     end;
-
   end;
 
   // figure out required component...
@@ -806,6 +806,47 @@ begin
 
   // return created tempering recipe, just in case
   Result := recipeCraft;
+end;
+
+function makeBreakdown(item: IInterface): IInterface;
+var
+  recipe, recipeItems, material: IInterface;
+  itemSignature: string;
+begin
+  itemSignature := Signature(item);
+  // filter selected records, which are not valid
+  if not ((itemSignature = 'WEAP') or (itemSignature = 'ARMO')) then
+    Exit;
+
+  // create COBJ record
+  recipe := createRecord(GetFile(item), 'COBJ');
+  // set EditorID for recipe
+  SetElementEditValues(recipe, 'EDID', 'Breakdown' + GetElementEditValues(item, 'EDID'));
+  // add reference to the smelter keyword
+  SetElementEditValues(recipe, 'BNAM', GetEditValue(getRecordByFormID('000A5CCE')));
+
+  // add required items list
+  Add(recipe, 'items', true);
+  // get reference to required items list inside recipe
+  recipeItems := ElementByPath(recipe, 'items');
+  addItem(recipeItems, item, 1);
+  // remove nil record in items requirements, if any
+  removeInvalidEntries(recipe);
+
+  addHasItemCondition(recipe, item);
+
+  // figure out returning component...
+  material := getMainMaterial(item);
+
+  if not Assigned(material) then begin
+    AddMessage('WARNING: resulting component was not specified for - ' + Name(recipe));
+  end else begin
+    SetElementEditValues(recipe, 'CNAM', Name(material));
+  end;
+
+  SetElementEditValues(recipe, 'NAM1', calcAmountOfMainMaterial(item));
+
+  Result := recipe;
 end;
 
 // shalow way to recognize item as Jewelry
