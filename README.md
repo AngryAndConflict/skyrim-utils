@@ -65,8 +65,10 @@ Removes keyword to the record, if it has one, returns true if was found and remo
 #### removeInvalidEntries(rec: IInterface);
 Removes invalid entries from containers and recipe items, from Leveled lists, npcs and spells, based on 'Skyrim - Remove invalid entries'.
 
-#### addPerkCondition(list: IInterface; perk: IInterface): IInterface;
-Adds requirement 'HasPerk' to Conditions list.
+#### addPerkCondition(listOrRecord: IInterface; perk: IInterface): IInterface;
+Adds requirement 'HasPerk' to Conditions list or record with conditions capability.
+#### addHasItemCondition(listOrRecord: IInterface; item: IInterface): IInterface;
+Adds conditions to record or list, defining that player has got an item in inventory. If item can be equiped will add two conditions to check if it is equiped, and if so, if player has more than one such item in inventory.
 
 #### createRecord(recordFile: IwbFile; recordSignature: str): IInterface;
 Creates new record inside provided file. Will create record category in that file if needed.
