@@ -84,13 +84,13 @@ Creates COBJ record for item, with referencing on it in amount of 1.
 #### makeTemperable(itemRecord: IInterface): IInterface;
 Creates new COBJ record to make item Temperable.
 ```pascal
-if not ( isTemperable(getRecordByFormID('02000801')) ) then
+if not isTemperable(getRecordByFormID('02000801')) then
   makeTemperable(getRecordByFormID('02000801');
 ```
 #### makeCraftable(itemRecord: IInterface): IInterface;
 Creates new COBJ record to make item Craftable at workbenches.
 ```pascal
-if not ( isCraftable(getRecordByFormID('02000801')) ) then
+if not isCraftable(getRecordByFormID('02000801')) then
   makeCraftable(getRecordByFormID('02000801');
 ```
 #### makeBreakdown(item: IInterface): IInterface;
