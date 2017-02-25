@@ -4,15 +4,18 @@
 ## SSEEdit usage
 For basic usage in [SSEEdit](http://www.nexusmods.com/skyrimspecialedition/mods/164/?), you will only need SkyrimUtils.pas and scripts you want to use (like Skyrim - Make Temperable.pas). Put these files into your 'xEdit/Edit scripts' folder.
 
+## Contribution
+Any help and suggestions of any sort are always welcomed. Please keep in mind, that SkyrimUtils.pas is auto-generated file, for production only, all its actual functions and sources are present inside utils-src folder.
+
 ## individual scripts
 ### Skyrim - Make Craftable
-Automaticaly generates Crafting recipe for selected WEAP/ARMO records. Adds all needed conditions and requirements. Required items will be selected according to items Keywords, if script can't do that - it will give a message in log with link on created recipe without required items.
+Automatically generates Crafting recipe for selected WEAP/ARMO records. Adds all needed conditions and requirements. Required items will be selected according to items Keywords, if script can't do that - it will give a message in log with link on created recipe without required items.
 
 ### Skyrim - Make Temperable
-Automaticaly generates Tempering recipe for selected WEAP/ARMO records. Adds all needed conditions and requirements. Required items will be selected according to items Keywords, if script can't do that - it will give a message in log with link on created recipe without required items.
+Automatically generates Tempering recipe for selected WEAP/ARMO records. Adds all needed conditions and requirements. Required items will be selected according to items Keywords, if script can't do that - it will give a message in log with link on created recipe without required items.
 
 ### Skyrim - Generate Enchanted Versions
-Automaticaly generates Enchanted Versions for selected WEAP/ARMO records.
+Automatically generates Enchanted Versions for selected WEAP/ARMO records.
 Currently Script generates 31 enchanted copies of selected weapons per each, adds enchantment, alters new records value, and adds respected Suffixes for easy parsing and replace.
 * For armors script will make only one enchanted copy per each, for now.
 * All enchanted versions will have it's propper Temper COBJ records as well.
@@ -21,59 +24,59 @@ Currently Script generates 31 enchanted copies of selected weapons per each, add
 
 ## SkyrimUtils functions
 #### isTemperable(recordToCheck: IInterface): boolean;
-Determins if item has a tempering recipe. Note: it is looking by "Referenced By", so if item originates inside Skyrim.esm, you have to "build" Skyrim.esm's reference before running script, or function result can be compromised.
+Determines if item has a tempering recipe. Note: it is looking by "Referenced By", so if item originates inside Skyrim.esm, you have to "build" Skyrim.esm's reference before running script, or function result can be compromised.
 ``` pascal
 if isTemperable(getRecordByFormID('020023EF')) then
   AddMessage('Already temperable item: ' + Name(getRecordByFormID('020023EF')));
 ```
 #### isCraftable(recordToCheck: IInterface): boolean;
-Determins if item has a crafting recipe. Note: it is looking by "Referenced By", so if item originates inside Skyrim.esm, you have to "build" Skyrim.esm's reference before running script, or function result can be compromised.
+Determines if item has a crafting recipe. Note: it is looking by "Referenced By", so if item originates inside Skyrim.esm, you have to "build" Skyrim.esm's reference before running script, or function result can be compromised.
 ``` pascal
 if isCraftable(getRecordByFormID('02000801')) then
   AddMessage('Already craftable item: ' + Name(getRecordByFormID('02000801')));
 ```
 #### isJewelry(item: IInterface): boolean;
-Shalow way to recognize item as Jewelry.
+Shallow way to recognize item as Jewelry.
 ``` pascal
 isJewelry(getRecordByFormID('0200488A')) // DLC1ReflectingShield --> false
 isJewelry(getRecordByFormID('020068AE')) // DLC1nVampireNightPowerNecklaceBats --> true
 ```
 #### isStaff(item: IInterface): boolean;
-Shalow way to recognize item as Staff.
+Shallow way to recognize item as Staff.
 ``` pascal
 isStaff(getRecordByFormID('0200488A')) // DLC1ReflectingShield --> false
 isStaff(getRecordByFormID('02011D5F')) // DLC1StaffFalmerIceStorm --> true
 ```
 
-#### addItem(list: IInterface; item: IInterface; amount: int) AddedListElement : IInterface;
+#### addItem(list: IInterface; item: IInterface; amount: integer) AddedListElement : IInterface;
 Adds item to list/collection, like items/Leveled entries.
 
-#### addToLeveledList(list: IInterface; entry: IInterface; level: int) AddedListElement : IInterface;
+#### addToLeveledList(list: IInterface; entry: IInterface; level: integer) AddedListElement : IInterface;
 Adds item reference to the leveled list.
 
-#### getRecordByFormID(id: str): IInterface;
+#### getRecordByFormID(id: string): IInterface;
 Gets record by its HEX FormID ('00049BB7').
 #### getPrice(item: IInterface): integer;
 Gets item value, in invalid/not determined cases will return 0.
 #### getMainMaterial(itemRecord: IInterface): IInterface;
 Will try to figure out right material for provided item record.
 
-#### hasKeyword(itemRecord: IInterface; keywordEditorID: str): bool;
+#### hasKeyword(itemRecord: IInterface; keywordEditorID: string): boolean;
 Checks the provided keyword inside record.
-#### addKeyword(itemRecord: IInterface; keyword: IInterface): int;
+#### addKeyword(itemRecord: IInterface; keyword: IInterface): integer;
 Adds keyword to the record, if it doesn't have one.
-#### removeKeyword(itemRecord: IInterface; keywordEditorID: string): bool;
+#### removeKeyword(itemRecord: IInterface; keywordEditorID: string): boolean;
 Removes keyword to the record, if it has one, returns true if was found and removed, false if not.
 
 #### removeInvalidEntries(rec: IInterface);
-Removes invalid entries from containers and recipe items, from Leveled lists, npcs and spells, based on 'Skyrim - Remove invalid entries'.
+Removes invalid entries from containers and recipe items, from Leveled lists, NPCs and spells, based on 'Skyrim - Remove invalid entries'.
 
 #### addPerkCondition(listOrRecord: IInterface; perk: IInterface): IInterface;
 Adds requirement 'HasPerk' to Conditions list or record with conditions capability.
 #### addHasItemCondition(listOrRecord: IInterface; item: IInterface): IInterface;
-Adds conditions to record or list, defining that player has got an item in inventory. If item can be equiped will add two conditions to check if it is equiped, and if so, if player has more than one such item in inventory.
+Adds conditions to record or list, defining that player has got an item in inventory. If item can be equiped will add two conditions to check if it is equipped, and if so, if player has more than one such item in inventory.
 
-#### createRecord(recordFile: IwbFile; recordSignature: str): IInterface;
+#### createRecord(recordFile: IwbFile; recordSignature: string): IInterface;
 Creates new record inside provided file. Will create record category in that file if needed.
 #### createRecipe(itemRecord: IInterface): IInterface;
 Creates COBJ record for item, with referencing on it in amount of 1.
@@ -91,4 +94,4 @@ if not ( isCraftable(getRecordByFormID('02000801')) ) then
   makeCraftable(getRecordByFormID('02000801');
 ```
 #### makeBreakdown(item: IInterface): IInterface;
-Creates new COBJ record to allow breaking item to its main original material with propper amount.
+Creates new COBJ record to allow breaking item to its main original material with proper amount.
