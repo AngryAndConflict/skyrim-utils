@@ -18,7 +18,7 @@ Automatically generates Tempering recipe for selected WEAP/ARMO records. Adds al
 Automatically generates Enchanted Versions for selected WEAP/ARMO records.
 Currently Script generates 31 enchanted copies of selected weapons per each, adds enchantment, alters new records value, and adds respected Suffixes for easy parsing and replace.
 * For armors script will make only one enchanted copy per each, for now.
-* All enchanted versions will have it's propper Temper COBJ records as well.
+* All enchanted versions will have it's proper Temper COBJ records as well.
 * For each selected record, will be created an individual Leveled List, with Base item + all it's enchanted versions. Each with count of 1, and based on enchantment level requirement
 * Script works with Weapons/Shields/Bags/Bandanas/Armor/Clothing/Amulets/Wigs... every thing, but script won't find right item requirements for tempering wig or amulet... probably... However it will make a recipe, and it will log a message with link on that recipe.
 
@@ -74,7 +74,7 @@ Removes invalid entries from containers and recipe items, from Leveled lists, NP
 #### addPerkCondition(listOrRecord: IInterface; perk: IInterface): IInterface;
 Adds requirement 'HasPerk' to Conditions list or record with conditions capability.
 #### addHasItemCondition(listOrRecord: IInterface; item: IInterface): IInterface;
-Adds conditions to record or list, defining that player has got an item in inventory. If item can be equiped will add two conditions to check if it is equipped, and if so, if player has more than one such item in inventory.
+Adds conditions to record or list, defining that player has got an item in inventory. If item can be equipped will add two conditions to check if it is equipped, and if so, if player has more than one such item in inventory.
 
 #### createRecord(recordFile: IwbFile; recordSignature: string): IInterface;
 Creates new record inside provided file. Will create record category in that file if needed.

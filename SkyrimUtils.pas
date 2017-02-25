@@ -92,8 +92,8 @@ begin
   // don't know what is this, but it should be equal to -1, if Function Runs On Subject
   SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
 
-  // WEAP and ARMO can be equiped, if so, should also trigger condition to have more than one item in inventory
-  // NOTE: onehanded weapons or jewelry, can be equiped at multiple slots, but can't filter that out
+  // WEAP and ARMO can be equipped, if so, should also trigger condition to have more than one item in inventory
+  // NOTE: onehanded weapons or jewelry, can be equipped at multiple slots, but can't filter that out
   itemSignature := Signature(item);
   if ((itemSignature = 'WEAP') or (itemSignature = 'ARMO')) then begin
     newCondition := ElementAssign(list, HighInteger, nil, false);
@@ -627,7 +627,7 @@ begin
   // get reference to required items list inside recipe
   recipeItems := ElementByPath(recipeCraft, 'items');
 
-  // trying to figure out propper requirements amount
+  // trying to figure out proper requirements amount
   amountOfMainComponent := calcAmountOfMainMaterial(itemRecord);
   amountOfAdditionalComponent := round(amountOfMainComponent / 3);
   if amountOfAdditionalComponent < 1 then

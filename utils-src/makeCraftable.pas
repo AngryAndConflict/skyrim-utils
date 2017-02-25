@@ -28,7 +28,7 @@ begin
   // get reference to required items list inside recipe
   recipeItems := ElementByPath(recipeCraft, 'items');
 
-  // trying to figure out propper requirements amount
+  // trying to figure out proper requirements amount
   amountOfMainComponent := calcAmountOfMainMaterial(itemRecord);
   amountOfAdditionalComponent := round(amountOfMainComponent / 3);
   if amountOfAdditionalComponent < 1 then
