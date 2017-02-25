@@ -1,6 +1,6 @@
 {
   Bunch of Skyrim specific utilits to write scripts on higher level of abstraction.
-	
+
   isTemperable         (recordToCheck: IInterface): boolean;                      // determins if item have tempering recipe
   isCraftable          (recordToCheck: IInterface): boolean;                      // determins if item have crafting recipe
   isJewelry            (item: IInterface): boolean;                               // shalow way to recognize item as Jewelry
@@ -22,7 +22,7 @@
   createRecipe         (itemRecord: IInterface): IInterface;                      // creates COBJ record for item, with referencing on it in amount of 1
   addPerkCondition     (listOrRecord: IInterface; perk: IInterface): IInterface;  // adds requirement 'HasPerk' to Conditions list or record
   addHasItemCondition  (listOrRecord: IInterface; item: IInterface): IInterface;  // adds conditions to record or list, defining that player has got an item in inventory
-  
+
   getPrice             (item: IInterface): integer;                               // gets item value, in invalid/not determined cases will return 0
   getMainMaterial      (itemRecord: IInterface): IInterface;                      // will try to figure out right material for provided item record
 
@@ -38,20 +38,22 @@ unit SkyrimUtils;
 
 // =Settings
 const
-  // FormID of Keyword, used for Weapon Tempering COBJ records in Skyrim
+  // FormID of Keyword, used for Weapon Tempering COBJ records
   WEAPON_TEMPERING_WORKBENCH_FORM_ID = '00088108'; // CraftingSmithingSharpeningWheel
-  // FormID of Keyword, used for Armor Tempering COBJ records in Skyrim
+  // FormID of Keyword, used for Armor Tempering COBJ records
   ARMOR_TEMPERING_WORKBENCH_FORM_ID = '000ADB78'; // CraftingSmithingArmorTable
 
-  // FormID of Keyword, used for Weapon Crafting COBJ records in Skyrim
+  // FormID of Keyword, used for Weapon Crafting COBJ records
   WEAPON_CRAFTING_WORKBENCH_FORM_ID = '00088105'; // CraftingSmithingForge
-  // FormID of Keyword, used for Armor Crafting COBJ records in Skyrim
+  // FormID of Keyword, used for Armor Crafting COBJ records
   ARMOR_CRAFTING_WORKBENCH_FORM_ID = '00088105'; // CraftingSmithingForge
-  
+	// FormID of Keyword, used for items Breakdown COBJ records
+	BREAKDOWN_WORKBENCH_FORM_ID = '000A5CCE'; // CraftingSmelter
+
   // Filtering Rules
   SIGNATURES_ALLOWED_TO_BE_IN_LEVELED_LISTS = 'WEAP ARMO AMMO ALCH LVLI LVLN LVSP SPEL BOOK MISC KEYM NPC_';
   SIGNATURES_ALLOWED_TO_BE_IN_CONTAINER = 'WEAP ARMO AMMO ALCH LVLI BOOK MISC KEYM';
-  
+
 var
   isUtilsInitialized: boolean;
   materialKeywordsMap: TStringList;
@@ -133,7 +135,7 @@ begin
     materialKeywordsMap.Add('ArmorMaterialBlades'); materialItemsMap.Add('0005AD9D'); // IngotEbony
     materialKeywordsMap.Add('ArmorMaterialDaedric'); materialItemsMap.Add('0005AD9D'); // IngotEbony
     materialKeywordsMap.Add('ArmorNightingale'); materialItemsMap.Add('0005AD9D'); // IngotEbony
-	
+
     materialKeywordsMap.Add('ArmorMaterialDwarven'); materialItemsMap.Add('000DB8A2'); // IngotDwarven
 
     materialKeywordsMap.Add('ArmorMaterialDragonscale'); materialItemsMap.Add('0003ADA3'); // DragonScales
@@ -823,7 +825,7 @@ begin
   // set EditorID for recipe
   SetElementEditValues(recipe, 'EDID', 'Breakdown' + GetElementEditValues(item, 'EDID'));
   // add reference to the smelter keyword
-  SetElementEditValues(recipe, 'BNAM', GetEditValue(getRecordByFormID('000A5CCE')));
+  SetElementEditValues(recipe, 'BNAM', GetEditValue(getRecordByFormID(BREAKDOWN_WORKBENCH_FORM_ID)));
 
   // add required items list
   Add(recipe, 'items', true);
