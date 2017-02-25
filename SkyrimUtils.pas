@@ -23,7 +23,7 @@
   addPerkCondition     (listOrRecord: IInterface; perk: IInterface): IInterface;  // adds requirement 'HasPerk' to Conditions list or record
   addHasItemCondition  (listOrRecord: IInterface; item: IInterface): IInterface;  // adds conditions to record or list, defining that player has got an item in inventory
 
-  getPrice             (itemRecord: IInterface): integer;                               // gets item value, in invalid/not determined cases will return 0
+  getPrice             (itemRecord: IInterface): integer;                         // gets item value, in invalid/not determined cases will return 0
   getMainMaterial      (itemRecord: IInterface): IInterface;                      // will try to figure out right material for provided item record
 
   calcAmountOfMainMaterial(itemRecord: IInterface): Integer;                      // calculates amount of material needed to craft an item
