@@ -23,14 +23,14 @@
   addPerkCondition     (listOrRecord: IInterface; perk: IInterface): IInterface;  // adds requirement 'HasPerk' to Conditions list or record
   addHasItemCondition  (listOrRecord: IInterface; item: IInterface): IInterface;  // adds conditions to record or list, defining that player has got an item in inventory
 
-  getPrice             (item: IInterface): integer;                               // gets item value, in invalid/not determined cases will return 0
+  getPrice             (itemRecord: IInterface): integer;                               // gets item value, in invalid/not determined cases will return 0
   getMainMaterial      (itemRecord: IInterface): IInterface;                      // will try to figure out right material for provided item record
 
   calcAmountOfMainMaterial(itemRecord: IInterface): Integer;                      // calculates amount of material needed to craft an item
 
-  makeTemperable       (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Temperable
-  makeCraftable        (itemRecord: IInterface): IInterface;                      // creates new COBJ record to make item Craftable at workbenches
-  makeBreakdown        (item: IInterface): IInterface;                            // creates new COBJ record to allow breaking item to its material
+  makeTemperable       (itemRecord: IInterface): IInterface;											// creates new COBJ record to make item Temperable
+  makeCraftable        (itemRecord: IInterface): IInterface;											// creates new COBJ record to make item Craftable at workbenches
+  makeBreakdown        (item: IInterface): IInterface;														// creates new COBJ record to allow breaking item to its material
 }
 
 
@@ -495,12 +495,12 @@ begin
 end;
 
 // gets price value of item
-function getPrice(item: IInterface): integer;
+function getPrice(itemRecord: IInterface): integer;
 var
   tmp: integer;
 begin
   Result := 0;
-  tmp := GetElementEditValues(item, 'DATA\Value');
+  tmp := GetElementEditValues(itemRecord, 'DATA\Value');
 
   if Assigned(tmp) then begin
     Result := tmp;
