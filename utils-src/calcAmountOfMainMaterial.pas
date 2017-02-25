@@ -1,3 +1,4 @@
+// calculates amount of material needed to craft an item
 function calcAmountOfMainMaterial(itemRecord: IInterface): Integer;
 var
   itemWeight: IInterface;

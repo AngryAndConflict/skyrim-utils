@@ -1,4 +1,4 @@
-// shalow way to recognize item as Staff
+// shallow way to recognize item as Staff
 function isStaff(item: IInterface): boolean;
 var
   tmp: IInterface;

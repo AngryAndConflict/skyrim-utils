@@ -1,10 +1,10 @@
 {
   Bunch of Skyrim specific utilits to write scripts on higher level of abstraction.
 
-  isTemperable         (recordToCheck: IInterface): boolean;                      // determins if item have tempering recipe
-  isCraftable          (recordToCheck: IInterface): boolean;                      // determins if item have crafting recipe
-  isJewelry            (item: IInterface): boolean;                               // shalow way to recognize item as Jewelry
-  isStaff              (item: IInterface): boolean;                               // shalow way to recognize item as Staff
+  isTemperable         (recordToCheck: IInterface): boolean;                      // determines if item have tempering recipe
+  isCraftable          (recordToCheck: IInterface): boolean;                      // determines if item have crafting recipe
+  isJewelry            (item: IInterface): boolean;                               // shallow way to recognize item as Jewelry
+  isStaff              (item: IInterface): boolean;                               // shallow way to recognize item as Staff
 
   addItem              (list: IInterface; item: IInterface; amount: int) AddedListElement: IInterface;  // adds item to list, like items/Leveled entries
   addToLeveledList     (list: IInterface; entry: IInterface; level: int) AddedListElement: IInterface;  // adds item reference to the leveled list
@@ -17,7 +17,7 @@
 
   createRecord         (recordFile: IwbFile; recordSignature: str): IInterface;   // creates new record inside provided file
 
-  removeInvalidEntries (rec: IInterface);                                         // removes invalid entries from containers and recipe items, from Leveled lists, npcs and spells, based on 'Skyrim - Remove invalid entries'
+  removeInvalidEntries (rec: IInterface);                                         // removes invalid entries from containers and recipe items, from Leveled lists, NPCs and spells, based on 'Skyrim - Remove invalid entries'
 
   createRecipe         (itemRecord: IInterface): IInterface;                      // creates COBJ record for item, with referencing on it in amount of 1
   addPerkCondition     (listOrRecord: IInterface; perk: IInterface): IInterface;  // adds requirement 'HasPerk' to Conditions list or record
@@ -229,6 +229,7 @@ begin
 
   Result := listElement;
 end;
+// calculates amount of material needed to craft an item
 function calcAmountOfMainMaterial(itemRecord: IInterface): Integer;
 var
   itemWeight: IInterface;
@@ -271,6 +272,7 @@ begin
   // create record and return it
   Result := Add(newRecordGroup, recordSignature, true);
 end;
+// will free lists out of memory, if needed
 procedure FinalizeUtils;
 begin
   if Assigned(materialKeywordsMap) then
@@ -494,7 +496,7 @@ begin
 
   end;
 end;
-// shalow way to recognize item as Jewelry
+// shallow way to recognize item as Jewelry
 function isJewelry(item: IInterface): boolean;
 begin
   Result := false;
@@ -509,7 +511,7 @@ begin
     end;
   end;
 end;
-// shalow way to recognize item as Staff
+// shallow way to recognize item as Staff
 function isStaff(item: IInterface): boolean;
 var
   tmp: IInterface;
@@ -903,7 +905,7 @@ begin
     end;
   end;
 end;
-// removess keyword to the record, if it has one
+// removes keyword to the record, if it has one
 function removeKeyword(itemRecord: IInterface; keywordEditorID: string): boolean;
 var
   keywordRef: IInterface;

@@ -1,4 +1,4 @@
-// shalow way to recognize item as Jewelry
+// shallow way to recognize item as Jewelry
 function isJewelry(item: IInterface): boolean;
 begin
   Result := false;

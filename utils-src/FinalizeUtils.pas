@@ -1,3 +1,4 @@
+// will free lists out of memory, if needed
 procedure FinalizeUtils;
 begin
   if Assigned(materialKeywordsMap) then

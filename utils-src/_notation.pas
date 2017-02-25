@@ -1,10 +1,10 @@
 {
   Bunch of Skyrim specific utilits to write scripts on higher level of abstraction.
 
-  isTemperable         (recordToCheck: IInterface): boolean;                      // determins if item have tempering recipe
-  isCraftable          (recordToCheck: IInterface): boolean;                      // determins if item have crafting recipe
-  isJewelry            (item: IInterface): boolean;                               // shalow way to recognize item as Jewelry
-  isStaff              (item: IInterface): boolean;                               // shalow way to recognize item as Staff
+  isTemperable         (recordToCheck: IInterface): boolean;                      // determines if item have tempering recipe
+  isCraftable          (recordToCheck: IInterface): boolean;                      // determines if item have crafting recipe
+  isJewelry            (item: IInterface): boolean;                               // shallow way to recognize item as Jewelry
+  isStaff              (item: IInterface): boolean;                               // shallow way to recognize item as Staff
 
   addItem              (list: IInterface; item: IInterface; amount: int) AddedListElement: IInterface;  // adds item to list, like items/Leveled entries
   addToLeveledList     (list: IInterface; entry: IInterface; level: int) AddedListElement: IInterface;  // adds item reference to the leveled list
@@ -17,7 +17,7 @@
 
   createRecord         (recordFile: IwbFile; recordSignature: str): IInterface;   // creates new record inside provided file
 
-  removeInvalidEntries (rec: IInterface);                                         // removes invalid entries from containers and recipe items, from Leveled lists, npcs and spells, based on 'Skyrim - Remove invalid entries'
+  removeInvalidEntries (rec: IInterface);                                         // removes invalid entries from containers and recipe items, from Leveled lists, NPCs and spells, based on 'Skyrim - Remove invalid entries'
 
   createRecipe         (itemRecord: IInterface): IInterface;                      // creates COBJ record for item, with referencing on it in amount of 1
   addPerkCondition     (listOrRecord: IInterface; perk: IInterface): IInterface;  // adds requirement 'HasPerk' to Conditions list or record

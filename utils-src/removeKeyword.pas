@@ -1,4 +1,4 @@
-// removess keyword to the record, if it has one
+// removes keyword to the record, if it has one
 function removeKeyword(itemRecord: IInterface; keywordEditorID: string): boolean;
 var
   keywordRef: IInterface;
