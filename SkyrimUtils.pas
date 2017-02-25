@@ -58,7 +58,316 @@ var
   isUtilsInitialized: boolean;
   materialKeywordsMap: TStringList;
   materialItemsMap: TStringList;
+// adds conditions defining that player has got an item in inventory
+function addHasItemCondition(list: IInterface; item: IInterface): IInterface;
+var
+  newCondition, tmp: IInterface;
+  itemSignature: string;
+begin
+  if not (Name(list) = 'Conditions') then begin
+    if Signature(list) = 'COBJ' then begin // record itself was provided
+      tmp := ElementByPath(list, 'Conditions');
+      if not Assigned(tmp) then begin
+        Add(list, 'Conditions', true);
+        list := ElementByPath(list, 'Conditions');
+        newCondition := ElementByIndex(list, 0); // xEdit will create dummy condition if new list was added
+      end else begin
+        list := tmp;
+      end;
+    end;
+  end;
 
+  if not Assigned(newCondition) then begin
+    // create condition
+    newCondition := ElementAssign(list, HighInteger, nil, false);
+  end;
+
+  // set type to Greater than / Or equal to
+  SetElementEditValues(newCondition, 'CTDA - \Type', '11000000');
+  // set some needed properties
+  SetElementEditValues(newCondition, 'CTDA - \Comparison Value', '1');
+  SetElementEditValues(newCondition, 'CTDA - \Function', 'GetItemCount');
+  SetElementEditValues(newCondition, 'CTDA - \Inventory Object', Name(item));
+  SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
+  // don't know what is this, but it should be equal to -1, if Function Runs On Subject
+  SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
+
+  // WEAP and ARMO can be equiped, if so, should also trigger condition to have more than one item in inventory
+  // NOTE: onehanded weapons or jewelry, can be equiped at multiple slots, but can't filter that out
+  itemSignature := Signature(item);
+  if ((itemSignature = 'WEAP') or (itemSignature = 'ARMO')) then begin
+    newCondition := ElementAssign(list, HighInteger, nil, false);
+    // set type to Equal to / Or
+    SetElementEditValues(newCondition, 'CTDA - \Type', '10010000');
+
+    // set some needed properties
+    SetElementEditValues(newCondition, 'CTDA - \Comparison Value', '0');
+    SetElementEditValues(newCondition, 'CTDA - \Function', 'GetEquipped');
+    SetElementEditValues(newCondition, 'CTDA - \Inventory Object', Name(item));
+    SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
+    // don't know what is this, but it should be equal to -1, if Function Runs On Subject
+    SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
+
+    newCondition := ElementAssign(list, HighInteger, nil, false);
+    // set type to Greater than / Or equal to
+    SetElementEditValues(newCondition, 'CTDA - \Type', '11000000');
+    // set some needed properties
+    SetElementEditValues(newCondition, 'CTDA - \Comparison Value', '2');
+    SetElementEditValues(newCondition, 'CTDA - \Function', 'GetItemCount');
+    SetElementEditValues(newCondition, 'CTDA - \Inventory Object', Name(item));
+    SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
+    // don't know what is this, but it should be equal to -1, if Function Runs On Subject
+    SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
+  end;
+
+  // remove nil records from list
+  removeInvalidEntries(list);
+
+  Result := newCondition;
+end;
+// adds item record reference to the list
+function addItem(list: IInterface; item: IInterface; amount: integer): IInterface;
+var
+  newItem: IInterface;
+  listName: string;
+begin
+  // add new item to list
+  newItem := ElementAssign(list, HighInteger, nil, false);
+  listName := Name(list);
+
+  // COBJ
+  if listName = 'Items' then begin
+    // set item reference
+    SetElementEditValues(newItem, 'CNTO - Item\Item', GetEditValue(item));
+    // set amount
+    SetElementEditValues(newItem, 'CNTO - Item\Count', amount);
+  // LVLI
+  end else if listName = 'Leveled List Entries' then begin
+    // edit it to be leveled list entry
+    SetElementEditValues(newItem, 'LVLO\Reference', GetEditValue(item));
+    SetElementEditValues(newItem, 'LVLO\Count', amount);
+  end;
+
+  // remove nil records from list
+  removeInvalidEntries(list);
+
+  Result := newItem;
+end;
+// adds keyword to the record, if it doesn't have one
+function addKeyword(itemRecord: IInterface; keyword: IInterface): integer;
+var
+  keywordRef: IInterface;
+begin
+  // don't edit records, which already have this keyword
+  if not hasKeyword(itemRecord, GetElementEditValues(keyword, 'EDID')) then begin
+    // get all keyword entries of provided record
+    keywordRef := ElementByName(itemRecord, 'KWDA');
+
+    // record doesn't have any keywords
+    if not Assigned(keywordRef) then begin
+      Add(itemRecord, 'KWDA', true);
+    end;
+    // add new record in keywords list
+    keywordRef := ElementAssign(ElementByPath(itemRecord, 'KWDA'), HighInteger, nil, false);
+    // set provided keyword to the new entry
+    SetEditValue(keywordRef, GetEditValue(keyword));
+  end;
+end;
+// adds requirement 'HasPerk' to Conditions list
+function addPerkCondition(list: IInterface; perk: IInterface): IInterface;
+var
+  newCondition, tmp: IInterface;
+begin
+  if not (Name(list) = 'Conditions') then begin
+    if Signature(list) = 'COBJ' then begin // record itself was provided
+      tmp := ElementByPath(list, 'Conditions');
+      if not Assigned(tmp) then begin
+        Add(list, 'Conditions', true);
+        list := ElementByPath(list, 'Conditions');
+        newCondition := ElementByIndex(list, 0); // xEdit will create dummy condition if new list was added
+      end else begin
+        list := tmp;
+      end;
+    end;
+  end;
+
+  if not Assigned(newCondition) then begin
+    // create condition
+    newCondition := ElementAssign(list, HighInteger, nil, false);
+  end;
+
+  // set type to Equal to
+  SetElementEditValues(newCondition, 'CTDA - \Type', '10000000');
+
+  // set some needed properties
+  SetElementEditValues(newCondition, 'CTDA - \Comparison Value', '1');
+  SetElementEditValues(newCondition, 'CTDA - \Function', 'HasPerk');
+  SetElementEditValues(newCondition, 'CTDA - \Perk', GetEditValue(perk));
+  SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
+  // don't know what is this, but it should be equal to -1, if Function Runs On Subject
+  SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
+
+  // remove nil records from list
+  removeInvalidEntries(list);
+
+  Result := newCondition;
+end;
+// adds item reference to the leveled list
+function addToLeveledList(list: IInterface; entry: IInterface; level: integer): IInterface;
+var
+  listElement: IInterface;
+begin
+
+  listElement := addItem(
+    ElementByPath(list, 'Leveled List Entries'), // take list of entries
+    entry,
+    1 // amount of items
+  );
+
+  // set destribution level
+  SetElementEditValues(listElement, 'LVLO\Level', level);
+
+  Result := listElement;
+end;
+function calcAmountOfMainMaterial(itemRecord: IInterface): Integer;
+var
+  itemWeight: IInterface;
+begin
+  Result := 1;
+
+  itemWeight := GetElementEditValues(itemRecord, 'DATA\Weight');
+  if Assigned(itemWeight) then begin
+    Result := 1 + round(itemWeight * 0.2);
+  end;
+end;
+// creates COBJ record for item
+function createRecipe(item: IInterface): IInterface;
+var
+  recipe: IInterface;
+begin
+  // create COBJ record
+  recipe := createRecord(GetFile(item), 'COBJ');
+
+  // add reference to the created object
+  SetElementEditValues(recipe, 'CNAM', Name(item));
+  // set Created Object Count
+  SetElementEditValues(recipe, 'NAM1', '1');
+
+  Result := recipe;
+end;
+// creates new record inside provided file
+function createRecord(recordFile: IwbFile; recordSignature: string): IInterface;
+var
+  newRecordGroup: IInterface;
+begin
+  // get category in file
+  newRecordGroup := GroupBySignature(recordFile, recordSignature);
+
+  // check the category is there
+  if not Assigned(newRecordGroup) then begin
+    newRecordGroup := Add(recordFile, recordSignature, true);
+  end;
+
+  // create record and return it
+  Result := Add(newRecordGroup, recordSignature, true);
+end;
+procedure FinalizeUtils;
+begin
+  if Assigned(materialKeywordsMap) then
+    materialKeywordsMap.Free;
+  if Assigned(materialItemsMap) then
+    materialItemsMap.Free;
+end;
+// will try to figure out right material for provided item record
+function getMainMaterial(itemRecord: IInterface): IInterface;
+var
+  itemSignature: string;
+  tmpKeywordsCollection: IInterface;
+  i, j: integer;
+
+  currentKeywordEDID: string;
+  resultItem: IInterface;
+begin
+  itemSignature := Signature(itemRecord);
+
+  if ((itemSignature = 'WEAP') or (itemSignature = 'ARMO') or (itemSignature = 'AMMO')) then begin
+    initUtils();
+    tmpKeywordsCollection := ElementByPath(itemRecord, 'KWDA');
+    // loop through each
+    for i := 0 to ElementCount(tmpKeywordsCollection) - 1 do begin
+      currentKeywordEDID := GetElementEditValues(LinksTo(ElementByIndex(tmpKeywordsCollection, i)), 'EDID');
+
+      for j := 0 to materialKeywordsMap.Count - 1 do begin
+        if materialKeywordsMap[j] = currentKeywordEDID then begin
+          resultItem := getRecordByFormID(materialItemsMap[j]);
+          Break;
+        end;
+      end;
+
+    end;
+
+    if not Assigned(resultItem) then begin
+      AddMessage('WARNING: no material keywords were found for - ' + Name(itemRecord));
+    end else begin
+      Result := resultItem;
+    end;
+
+  end;
+end;
+// gets price value of item
+function getPrice(item: IInterface): integer;
+var
+  tmp: integer;
+begin
+  Result := 0;
+  tmp := GetElementEditValues(item, 'DATA\Value');
+
+  if Assigned(tmp) then begin
+    Result := tmp;
+  end;
+end;
+// gets record by its HEX FormID
+function getRecordByFormID(id: string): IInterface;
+var
+  tmp: IInterface;
+begin
+  // if file or record was not found => return nil
+  Result := nil;
+
+  // if records plugin id is loaded
+  if not (StrToInt(Copy(id, 1, 2)) > (FileCount - 1)) then begin
+    // basically we took record like 00049BB7, and by slicing 2 first symbols, we get its file index, in this case Skyrim (00)
+    tmp := FileByLoadOrder(StrToInt('$' + Copy(id, 1, 2)));
+
+    // file was found
+    if Assigned(tmp) then begin
+      // look for this record in founded file, and return it
+      tmp := RecordByFormID(tmp, StrToInt('$' + id), true);
+
+      // check that record was found
+      if Assigned(tmp) then
+        Result := tmp;
+
+    end;
+  end;
+end;
+// checks the provided keyword inside record
+function hasKeyword(itemRecord: IInterface; keywordEditorID: string): boolean;
+var
+  tmpKeywordsCollection: IInterface;
+  i: integer;
+begin
+  Result := false;
+  // get all keyword entries of provided record
+  tmpKeywordsCollection := ElementByPath(itemRecord, 'KWDA');
+  // loop through each
+  for i := 0 to ElementCount(tmpKeywordsCollection) - 1 do begin
+    if GetElementEditValues(LinksTo(ElementByIndex(tmpKeywordsCollection, i)), 'EDID') = keywordEditorID then begin
+      Result := true;
+      Break;
+    end;
+  end;
+end;
 procedure initUtils;
 var
   i: integer;
@@ -158,473 +467,134 @@ begin
     // DLC1ArmorMaterialVampire - not temperable/craftable ? O_o
   end;
 end;
+function isCraftable(recordToCheck: IInterface): boolean;
+var
+  i: integer;
+  tmp, bnam: IInterface;
+begin
+  Result := false;
 
-// gets record by its HEX FormID
-function getRecordByFormID(id: string): IInterface;
+  for i := 0 to ReferencedByCount(recordToCheck) - 1 do begin
+    tmp := ReferencedByIndex(recordToCheck, i);
+
+    if (Signature(tmp) = 'COBJ') then begin
+      if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
+        bnam := GetElementEditValues(tmp, 'BNAM');
+        if (
+          (bnam = 'CraftingSmithingForge [KYWD:00088105]')
+          or (bnam = 'CraftingSmelter [KYWD:000A5CCE]')
+          or (bnam = 'CraftingTanningRack [KYWD:0007866A]')
+        ) then begin
+          Result := true;
+          Break
+        end;
+
+      end;
+    end;
+
+  end;
+end;
+// shalow way to recognize item as Jewelry
+function isJewelry(item: IInterface): boolean;
+begin
+  Result := false;
+
+  if (Signature(item) = 'ARMO') then begin
+    if (
+      hasKeyword(item, 'ArmorJewelry') // ArmorJewelry [KYWD:0006BBE9]
+      or hasKeyword(item, 'VendorItemJewelry') // VendorItemJewelry [KYWD:0008F95A]
+      or hasKeyword(item, 'JewelryExpensive') // JewelryExpensive [KYWD:000A8664]
+    ) then begin
+      Result := true;
+    end;
+  end;
+end;
+// shalow way to recognize item as Staff
+function isStaff(item: IInterface): boolean;
 var
   tmp: IInterface;
 begin
-  // if file or record was not found => return nil
-  Result := nil;
-
-  // if records plugin id is loaded
-  if not (StrToInt(Copy(id, 1, 2)) > (FileCount - 1)) then begin
-    // basically we took record like 00049BB7, and by slicing 2 first symbols, we get its file index, in this case Skyrim (00)
-    tmp := FileByLoadOrder(StrToInt('$' + Copy(id, 1, 2)));
-
-    // file was found
-    if Assigned(tmp) then begin
-      // look for this record in founded file, and return it
-      tmp := RecordByFormID(tmp, StrToInt('$' + id), true);
-
-      // check that record was found
-      if Assigned(tmp) then
-        Result := tmp;
-
-    end;
-  end;
-end;
-
-// checks the provided keyword inside record
-function hasKeyword(itemRecord: IInterface; keywordEditorID: string): boolean;
-var
-  tmpKeywordsCollection: IInterface;
-  i: integer;
-begin
   Result := false;
-  // get all keyword entries of provided record
-  tmpKeywordsCollection := ElementByPath(itemRecord, 'KWDA');
-  // loop through each
-  for i := 0 to ElementCount(tmpKeywordsCollection) - 1 do begin
-    if GetElementEditValues(LinksTo(ElementByIndex(tmpKeywordsCollection, i)), 'EDID') = keywordEditorID then begin
+
+  if (Signature(item) = 'WEAP') then begin
+    // WeapTypeStaff [KYWD:0001E716]     VendorItemStaff [KYWD:000937A4]
+    if ( hasKeyword(item, 'WeapTypeStaff') or hasKeyword(item, 'VendorItemStaff') ) then begin
       Result := true;
-      Break;
-    end;
-  end;
-end;
-
-// adds keyword to the record, if it doesn't have one
-function addKeyword(itemRecord: IInterface; keyword: IInterface): integer;
-var
-  keywordRef: IInterface;
-begin
-  // don't edit records, which already have this keyword
-  if not hasKeyword(itemRecord, GetElementEditValues(keyword, 'EDID')) then begin
-    // get all keyword entries of provided record
-    keywordRef := ElementByName(itemRecord, 'KWDA');
-
-    // record doesn't have any keywords
-    if not Assigned(keywordRef) then begin
-      Add(itemRecord, 'KWDA', true);
-    end;
-    // add new record in keywords list
-    keywordRef := ElementAssign(ElementByPath(itemRecord, 'KWDA'), HighInteger, nil, false);
-    // set provided keyword to the new entry
-    SetEditValue(keywordRef, GetEditValue(keyword));
-  end;
-end;
-
-// removess keyword to the record, if it has one
-function removeKeyword(itemRecord: IInterface; keywordEditorID: string): boolean;
-var
-  keywordRef: IInterface;
-  tmpKeywordsCollection: IInterface;
-  i: integer;
-begin
-  Result := false;
-
-  if hasKeyword(itemRecord, keywordEditorID) then begin
-    // get all keyword entries of provided record
-    tmpKeywordsCollection := ElementByPath(itemRecord, 'KWDA');
-    // loop through each
-    for i := 0 to ElementCount(tmpKeywordsCollection) - 1 do begin
-      keywordRef := LinksTo(ElementByIndex(tmpKeywordsCollection, i));
-      if GetElementEditValues(keywordRef, 'EDID') = keywordEditorID then begin
-        RemoveByIndex(tmpKeywordsCollection, i, true);
-        Result := true;
-        Break;
+    end else begin
+      tmp := GetElementEditValues(item, 'DNAM\Animation Type');
+      if Assigned(tmp) then begin
+        if (tmp = 'Staff') then begin
+          Result := true;
+        end;
       end;
     end;
   end;
 end;
-
-// creates new record inside provided file
-function createRecord(recordFile: IwbFile; recordSignature: string): IInterface;
+function isTemperable(recordToCheck: IInterface): boolean;
 var
-  newRecordGroup: IInterface;
+  i: integer;
+  tmp, bnam: IInterface;
 begin
-  // get category in file
-  newRecordGroup := GroupBySignature(recordFile, recordSignature);
+  Result := false;
 
-  // check the category is there
-  if not Assigned(newRecordGroup) then begin
-    newRecordGroup := Add(recordFile, recordSignature, true);
+  for i := 0 to ReferencedByCount(recordToCheck) - 1 do begin
+    tmp := ReferencedByIndex(recordToCheck, i);
+
+    if (Signature(tmp) = 'COBJ') then begin
+      if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
+        bnam := GetElementEditValues(tmp, 'BNAM');
+        if (
+          (bnam = 'CraftingSmithingSharpeningWheel [KYWD:00088108]')
+          or (bnam = 'CraftingSmithingArmorTable [KYWD:000ADB78]')
+        ) then begin
+          Result := true;
+          Break
+        end;
+      end;
+    end;
+
   end;
-
-  // create record and return it
-  Result := Add(newRecordGroup, recordSignature, true);
 end;
-
-// based on Skyrim - Remove invalid entries
-// removes invalid entries from containers and recipe items, from Leveled lists, npcs and spells
-procedure removeInvalidEntries(rec: IInterface);
+function makeBreakdown(item: IInterface): IInterface;
 var
-  i, num: integer;
-  lst, ent: IInterface;
-  recordSignature,
-    refName, // path to FormID reference relative to list's entry
-    countname // counter subrecord to update
-  : string;
+  recipe, recipeItems, material: IInterface;
+  itemSignature: string;
 begin
-  recordSignature := Signature(rec);
-
-  // containers and constractable objects
-  if (recordSignature = 'CONT') or (recordSignature = 'COBJ') then begin
-    lst := ElementByName(rec, 'Items');
-    refName := 'CNTO\Item';
-    countname := 'COCT';
-  end
-  // leveled items, npcs and spells
-  else if (recordSignature = 'LVLI') or (recordSignature = 'LVLN') or (recordSignature = 'LVSP') then begin
-    lst := ElementByName(rec, 'Leveled List Entries');
-    refName := 'LVLO\Reference';
-    countname := 'LLCT';
-  end
-  // Outfites
-  else if recordSignature = 'OTFT' then begin
-    lst := ElementByName(rec, 'INAM');
-    refName := 'item';
-  end;
-
-  if not Assigned(lst) then
+  itemSignature := Signature(item);
+  // filter selected records, which are not valid
+  if not ((itemSignature = 'WEAP') or (itemSignature = 'ARMO')) then
     Exit;
 
-  num := ElementCount(lst);
-  // check from the end since removing items will shift indexes
-  for i := num - 1 downto 0 do begin
-    // get individual entry element
-    ent := ElementByIndex(lst, i);
-    // Check() returns error string if any or empty string if no errors
-    if Check(ElementByPath(ent, refName)) <> '' then
-      Remove(ent);
-  end;
-
-  // has counter
-  if Assigned(countname) then begin
-    // update counter subrecord
-    if num <> ElementCount(lst) then begin
-      num := ElementCount(lst);
-      // set new value or remove subrecord if list is empty (like CK does)
-      if num > 0 then
-        SetElementNativeValues(rec, countname, num)
-      else
-        RemoveElement(rec, countname);
-    end;
-  end;
-end;
-
-// adds item record reference to the list
-function addItem(list: IInterface; item: IInterface; amount: integer): IInterface;
-var
-  newItem: IInterface;
-  listName: string;
-begin
-  // add new item to list
-  newItem := ElementAssign(list, HighInteger, nil, false);
-  listName := Name(list);
-
-  // COBJ
-  if listName = 'Items' then begin
-    // set item reference
-    SetElementEditValues(newItem, 'CNTO - Item\Item', GetEditValue(item));
-    // set amount
-    SetElementEditValues(newItem, 'CNTO - Item\Count', amount);
-  // LVLI
-  end else if listName = 'Leveled List Entries' then begin
-    // edit it to be leveled list entry
-    SetElementEditValues(newItem, 'LVLO\Reference', GetEditValue(item));
-    SetElementEditValues(newItem, 'LVLO\Count', amount);
-  end;
-
-  // remove nil records from list
-  removeInvalidEntries(list);
-
-  Result := newItem;
-end;
-
-// adds item reference to the leveled list
-function addToLeveledList(list: IInterface; entry: IInterface; level: integer): IInterface;
-var
-  listElement: IInterface;
-begin
-
-  listElement := addItem(
-    ElementByPath(list, 'Leveled List Entries'), // take list of entries
-    entry,
-    1 // amount of items
-  );
-
-  // set destribution level
-  SetElementEditValues(listElement, 'LVLO\Level', level);
-
-  Result := listElement;
-end;
-
-// creates COBJ record for item
-function createRecipe(item: IInterface): IInterface;
-var
-  recipe: IInterface;
-begin
   // create COBJ record
   recipe := createRecord(GetFile(item), 'COBJ');
+  // set EditorID for recipe
+  SetElementEditValues(recipe, 'EDID', 'Breakdown' + GetElementEditValues(item, 'EDID'));
+  // add reference to the smelter keyword
+  SetElementEditValues(recipe, 'BNAM', GetEditValue(getRecordByFormID(BREAKDOWN_WORKBENCH_FORM_ID)));
 
-  // add reference to the created object
-  SetElementEditValues(recipe, 'CNAM', Name(item));
-  // set Created Object Count
-  SetElementEditValues(recipe, 'NAM1', '1');
+  // add required items list
+  Add(recipe, 'items', true);
+  // get reference to required items list inside recipe
+  recipeItems := ElementByPath(recipe, 'items');
+  addItem(recipeItems, item, 1);
+  // remove nil record in items requirements, if any
+  removeInvalidEntries(recipe);
+
+  addHasItemCondition(recipe, item);
+
+  // figure out returning component...
+  material := getMainMaterial(item);
+
+  if not Assigned(material) then begin
+    AddMessage('WARNING: resulting component was not specified for - ' + Name(recipe));
+  end else begin
+    SetElementEditValues(recipe, 'CNAM', Name(material));
+  end;
+
+  SetElementEditValues(recipe, 'NAM1', calcAmountOfMainMaterial(item));
 
   Result := recipe;
 end;
-
-// adds requirement 'HasPerk' to Conditions list
-function addPerkCondition(list: IInterface; perk: IInterface): IInterface;
-var
-  newCondition, tmp: IInterface;
-begin
-  if not (Name(list) = 'Conditions') then begin
-    if Signature(list) = 'COBJ' then begin // record itself was provided
-      tmp := ElementByPath(list, 'Conditions');
-      if not Assigned(tmp) then begin
-        Add(list, 'Conditions', true);
-        list := ElementByPath(list, 'Conditions');
-        newCondition := ElementByIndex(list, 0); // xEdit will create dummy condition if new list was added
-      end else begin
-        list := tmp;
-      end;
-    end;
-  end;
-
-  if not Assigned(newCondition) then begin
-    // create condition
-    newCondition := ElementAssign(list, HighInteger, nil, false);
-  end;
-
-  // set type to Equal to
-  SetElementEditValues(newCondition, 'CTDA - \Type', '10000000');
-
-  // set some needed properties
-  SetElementEditValues(newCondition, 'CTDA - \Comparison Value', '1');
-  SetElementEditValues(newCondition, 'CTDA - \Function', 'HasPerk');
-  SetElementEditValues(newCondition, 'CTDA - \Perk', GetEditValue(perk));
-  SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
-  // don't know what is this, but it should be equal to -1, if Function Runs On Subject
-  SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
-
-  // remove nil records from list
-  removeInvalidEntries(list);
-
-  Result := newCondition;
-end;
-
-// adds conditions defining that player has got an item in inventory
-function addHasItemCondition(list: IInterface; item: IInterface): IInterface;
-var
-  newCondition, tmp: IInterface;
-  itemSignature: string;
-begin
-  if not (Name(list) = 'Conditions') then begin
-    if Signature(list) = 'COBJ' then begin // record itself was provided
-      tmp := ElementByPath(list, 'Conditions');
-      if not Assigned(tmp) then begin
-        Add(list, 'Conditions', true);
-        list := ElementByPath(list, 'Conditions');
-        newCondition := ElementByIndex(list, 0); // xEdit will create dummy condition if new list was added
-      end else begin
-        list := tmp;
-      end;
-    end;
-  end;
-
-  if not Assigned(newCondition) then begin
-    // create condition
-    newCondition := ElementAssign(list, HighInteger, nil, false);
-  end;
-
-  // set type to Greater than / Or equal to
-  SetElementEditValues(newCondition, 'CTDA - \Type', '11000000');
-  // set some needed properties
-  SetElementEditValues(newCondition, 'CTDA - \Comparison Value', '1');
-  SetElementEditValues(newCondition, 'CTDA - \Function', 'GetItemCount');
-  SetElementEditValues(newCondition, 'CTDA - \Inventory Object', Name(item));
-  SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
-  // don't know what is this, but it should be equal to -1, if Function Runs On Subject
-  SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
-
-  // WEAP and ARMO can be equiped, if so, should also trigger condition to have more than one item in inventory
-  // NOTE: onehanded weapons or jewelry, can be equiped at multiple slots, but can't filter that out
-  itemSignature := Signature(item);
-  if ((itemSignature = 'WEAP') or (itemSignature = 'ARMO')) then begin
-    newCondition := ElementAssign(list, HighInteger, nil, false);
-    // set type to Equal to / Or
-    SetElementEditValues(newCondition, 'CTDA - \Type', '10010000');
-
-    // set some needed properties
-    SetElementEditValues(newCondition, 'CTDA - \Comparison Value', '0');
-    SetElementEditValues(newCondition, 'CTDA - \Function', 'GetEquipped');
-    SetElementEditValues(newCondition, 'CTDA - \Inventory Object', Name(item));
-    SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
-    // don't know what is this, but it should be equal to -1, if Function Runs On Subject
-    SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
-
-    newCondition := ElementAssign(list, HighInteger, nil, false);
-    // set type to Greater than / Or equal to
-    SetElementEditValues(newCondition, 'CTDA - \Type', '11000000');
-    // set some needed properties
-    SetElementEditValues(newCondition, 'CTDA - \Comparison Value', '2');
-    SetElementEditValues(newCondition, 'CTDA - \Function', 'GetItemCount');
-    SetElementEditValues(newCondition, 'CTDA - \Inventory Object', Name(item));
-    SetElementEditValues(newCondition, 'CTDA - \Run On', 'Subject');
-    // don't know what is this, but it should be equal to -1, if Function Runs On Subject
-    SetElementEditValues(newCondition, 'CTDA - \Parameter #3', '-1');
-  end;
-
-  // remove nil records from list
-  removeInvalidEntries(list);
-
-  Result := newCondition;
-end;
-
-// gets price value of item
-function getPrice(itemRecord: IInterface): integer;
-var
-  tmp: integer;
-begin
-  Result := 0;
-  tmp := GetElementEditValues(itemRecord, 'DATA\Value');
-
-  if Assigned(tmp) then begin
-    Result := tmp;
-  end;
-end;
-
-// will try to figure out right material for provided item record
-function getMainMaterial(itemRecord: IInterface): IInterface;
-var
-  itemSignature: string;
-  tmpKeywordsCollection: IInterface;
-  i, j: integer;
-
-  currentKeywordEDID: string;
-  resultItem: IInterface;
-begin
-  itemSignature := Signature(itemRecord);
-
-  if ((itemSignature = 'WEAP') or (itemSignature = 'ARMO') or (itemSignature = 'AMMO')) then begin
-    initUtils();
-    tmpKeywordsCollection := ElementByPath(itemRecord, 'KWDA');
-    // loop through each
-    for i := 0 to ElementCount(tmpKeywordsCollection) - 1 do begin
-      currentKeywordEDID := GetElementEditValues(LinksTo(ElementByIndex(tmpKeywordsCollection, i)), 'EDID');
-
-      for j := 0 to materialKeywordsMap.Count - 1 do begin
-        if materialKeywordsMap[j] = currentKeywordEDID then begin
-          resultItem := getRecordByFormID(materialItemsMap[j]);
-          Break;
-        end;
-      end;
-
-    end;
-
-    if not Assigned(resultItem) then begin
-      AddMessage('WARNING: no material keywords were found for - ' + Name(itemRecord));
-    end else begin
-      Result := resultItem;
-    end;
-
-  end;
-end;
-
-
-// creates new COBJ record to make item Temperable
-function makeTemperable(itemRecord: IInterface): IInterface;
-var
-  recipeTemper,
-    recipeCondition, recipeConditions,
-    recipeItem, recipeItems
-  : IInterface;
-begin
-  recipeTemper := createRecipe(itemRecord);
-
-  // add new condition list
-  Add(recipeTemper, 'Conditions', true);
-  // get reference to condition list inside recipe
-  recipeConditions := ElementByPath(recipeTemper, 'Conditions');
-
-  // add IsEnchanted condition
-  // get new condition from list
-  recipeCondition := ElementByIndex(recipeConditions, 0);
-  // set type to Not equal to / Or
-  SetElementEditValues(recipeCondition, 'CTDA - \Type', '00010000');
-  // set some needed properties
-  SetElementEditValues(recipeCondition, 'CTDA - \Comparison Value', '1');
-  SetElementEditValues(recipeCondition, 'CTDA - \Function', 'EPTemperingItemIsEnchanted');
-  SetElementEditValues(recipeCondition, 'CTDA - \Run On', 'Subject');
-  // don't know what is this, but it should be equal to -1, if Function Runs On Subject
-  SetElementEditValues(recipeCondition, 'CTDA - \Parameter #3', '-1');
-
-  // add second condition, for perk ArcaneBlacksmith check
-  addPerkCondition(recipeConditions, getRecordByFormID('0005218E')); // ArcaneBlacksmith
-
-  // add required items list
-  Add(recipeTemper, 'items', true);
-  // get reference to required items list inside recipe
-  recipeItems := ElementByPath(recipeTemper, 'items');
-
-  if Signature(itemRecord) = 'WEAP' then begin
-    // set EditorID for recipe
-    SetElementEditValues(recipeTemper, 'EDID', 'TemperWeapon' + GetElementEditValues(itemRecord, 'EDID'));
-
-    // add reference to the workbench keyword
-    SetElementEditValues(recipeTemper, 'BNAM', GetEditValue(
-      getRecordByFormID(WEAPON_TEMPERING_WORKBENCH_FORM_ID)
-    ));
-
-  end else if Signature(itemRecord) = 'ARMO' then begin
-    // set EditorID for recipe
-    SetElementEditValues(recipeTemper, 'EDID', 'TemperArmor' + GetElementEditValues(itemRecord, 'EDID'));
-
-    // add reference to the workbench keyword
-    SetElementEditValues(recipeTemper, 'BNAM', GetEditValue(
-      getRecordByFormID(ARMOR_TEMPERING_WORKBENCH_FORM_ID)
-    ));
-  end;
-
-  // figure out required component...
-  addItem(recipeItems, getMainMaterial(itemRecord), 1);
-
-  // remove nil record in items requirements, if any
-  removeInvalidEntries(recipeTemper);
-
-  if GetElementEditValues(recipeTemper, 'COCT') = '' then begin
-    AddMessage('WARNING: no item requirements was specified for - ' + Name(recipeTemper));
-  end;
-
-  // return created tempering recipe, just in case
-  Result := recipeTemper;
-end;
-
-function calcAmountOfMainMaterial(itemRecord: IInterface): Integer;
-var
-  itemWeight: IInterface;
-begin
-  Result := 1;
-
-  itemWeight := GetElementEditValues(itemRecord, 'DATA\Weight');
-  if Assigned(itemWeight) then begin
-    Result := 1 + round(itemWeight * 0.2);
-  end;
-end;
-
 // creates new COBJ record to make item Craftable at workbenches
 function makeCraftable(itemRecord: IInterface): IInterface;
 var
@@ -809,146 +779,151 @@ begin
   // return created tempering recipe, just in case
   Result := recipeCraft;
 end;
-
-function makeBreakdown(item: IInterface): IInterface;
+// creates new COBJ record to make item Temperable
+function makeTemperable(itemRecord: IInterface): IInterface;
 var
-  recipe, recipeItems, material: IInterface;
-  itemSignature: string;
+  recipeTemper,
+    recipeCondition, recipeConditions,
+    recipeItem, recipeItems
+  : IInterface;
 begin
-  itemSignature := Signature(item);
-  // filter selected records, which are not valid
-  if not ((itemSignature = 'WEAP') or (itemSignature = 'ARMO')) then
-    Exit;
+  recipeTemper := createRecipe(itemRecord);
 
-  // create COBJ record
-  recipe := createRecord(GetFile(item), 'COBJ');
-  // set EditorID for recipe
-  SetElementEditValues(recipe, 'EDID', 'Breakdown' + GetElementEditValues(item, 'EDID'));
-  // add reference to the smelter keyword
-  SetElementEditValues(recipe, 'BNAM', GetEditValue(getRecordByFormID(BREAKDOWN_WORKBENCH_FORM_ID)));
+  // add new condition list
+  Add(recipeTemper, 'Conditions', true);
+  // get reference to condition list inside recipe
+  recipeConditions := ElementByPath(recipeTemper, 'Conditions');
+
+  // add IsEnchanted condition
+  // get new condition from list
+  recipeCondition := ElementByIndex(recipeConditions, 0);
+  // set type to Not equal to / Or
+  SetElementEditValues(recipeCondition, 'CTDA - \Type', '00010000');
+  // set some needed properties
+  SetElementEditValues(recipeCondition, 'CTDA - \Comparison Value', '1');
+  SetElementEditValues(recipeCondition, 'CTDA - \Function', 'EPTemperingItemIsEnchanted');
+  SetElementEditValues(recipeCondition, 'CTDA - \Run On', 'Subject');
+  // don't know what is this, but it should be equal to -1, if Function Runs On Subject
+  SetElementEditValues(recipeCondition, 'CTDA - \Parameter #3', '-1');
+
+  // add second condition, for perk ArcaneBlacksmith check
+  addPerkCondition(recipeConditions, getRecordByFormID('0005218E')); // ArcaneBlacksmith
 
   // add required items list
-  Add(recipe, 'items', true);
+  Add(recipeTemper, 'items', true);
   // get reference to required items list inside recipe
-  recipeItems := ElementByPath(recipe, 'items');
-  addItem(recipeItems, item, 1);
+  recipeItems := ElementByPath(recipeTemper, 'items');
+
+  if Signature(itemRecord) = 'WEAP' then begin
+    // set EditorID for recipe
+    SetElementEditValues(recipeTemper, 'EDID', 'TemperWeapon' + GetElementEditValues(itemRecord, 'EDID'));
+
+    // add reference to the workbench keyword
+    SetElementEditValues(recipeTemper, 'BNAM', GetEditValue(
+      getRecordByFormID(WEAPON_TEMPERING_WORKBENCH_FORM_ID)
+    ));
+
+  end else if Signature(itemRecord) = 'ARMO' then begin
+    // set EditorID for recipe
+    SetElementEditValues(recipeTemper, 'EDID', 'TemperArmor' + GetElementEditValues(itemRecord, 'EDID'));
+
+    // add reference to the workbench keyword
+    SetElementEditValues(recipeTemper, 'BNAM', GetEditValue(
+      getRecordByFormID(ARMOR_TEMPERING_WORKBENCH_FORM_ID)
+    ));
+  end;
+
+  // figure out required component...
+  addItem(recipeItems, getMainMaterial(itemRecord), 1);
+
   // remove nil record in items requirements, if any
-  removeInvalidEntries(recipe);
+  removeInvalidEntries(recipeTemper);
 
-  addHasItemCondition(recipe, item);
-
-  // figure out returning component...
-  material := getMainMaterial(item);
-
-  if not Assigned(material) then begin
-    AddMessage('WARNING: resulting component was not specified for - ' + Name(recipe));
-  end else begin
-    SetElementEditValues(recipe, 'CNAM', Name(material));
+  if GetElementEditValues(recipeTemper, 'COCT') = '' then begin
+    AddMessage('WARNING: no item requirements was specified for - ' + Name(recipeTemper));
   end;
 
-  SetElementEditValues(recipe, 'NAM1', calcAmountOfMainMaterial(item));
-
-  Result := recipe;
+  // return created tempering recipe, just in case
+  Result := recipeTemper;
 end;
-
-// shalow way to recognize item as Jewelry
-function isJewelry(item: IInterface): boolean;
+// based on Skyrim - Remove invalid entries
+// removes invalid entries from containers and recipe items, from Leveled lists, npcs and spells
+procedure removeInvalidEntries(rec: IInterface);
+var
+  i, num: integer;
+  lst, ent: IInterface;
+  recordSignature,
+    refName, // path to FormID reference relative to list's entry
+    countname // counter subrecord to update
+  : string;
 begin
-  Result := false;
+  recordSignature := Signature(rec);
 
-  if (Signature(item) = 'ARMO') then begin
-    if (
-      hasKeyword(item, 'ArmorJewelry') // ArmorJewelry [KYWD:0006BBE9]
-      or hasKeyword(item, 'VendorItemJewelry') // VendorItemJewelry [KYWD:0008F95A]
-      or hasKeyword(item, 'JewelryExpensive') // JewelryExpensive [KYWD:000A8664]
-    ) then begin
-      Result := true;
+  // containers and constractable objects
+  if (recordSignature = 'CONT') or (recordSignature = 'COBJ') then begin
+    lst := ElementByName(rec, 'Items');
+    refName := 'CNTO\Item';
+    countname := 'COCT';
+  end
+  // leveled items, npcs and spells
+  else if (recordSignature = 'LVLI') or (recordSignature = 'LVLN') or (recordSignature = 'LVSP') then begin
+    lst := ElementByName(rec, 'Leveled List Entries');
+    refName := 'LVLO\Reference';
+    countname := 'LLCT';
+  end
+  // Outfites
+  else if recordSignature = 'OTFT' then begin
+    lst := ElementByName(rec, 'INAM');
+    refName := 'item';
+  end;
+
+  if not Assigned(lst) then
+    Exit;
+
+  num := ElementCount(lst);
+  // check from the end since removing items will shift indexes
+  for i := num - 1 downto 0 do begin
+    // get individual entry element
+    ent := ElementByIndex(lst, i);
+    // Check() returns error string if any or empty string if no errors
+    if Check(ElementByPath(ent, refName)) <> '' then
+      Remove(ent);
+  end;
+
+  // has counter
+  if Assigned(countname) then begin
+    // update counter subrecord
+    if num <> ElementCount(lst) then begin
+      num := ElementCount(lst);
+      // set new value or remove subrecord if list is empty (like CK does)
+      if num > 0 then
+        SetElementNativeValues(rec, countname, num)
+      else
+        RemoveElement(rec, countname);
     end;
   end;
 end;
-
-// shalow way to recognize item as Staff
-function isStaff(item: IInterface): boolean;
+// removess keyword to the record, if it has one
+function removeKeyword(itemRecord: IInterface; keywordEditorID: string): boolean;
 var
-  tmp: IInterface;
-begin
-  Result := false;
-
-  if (Signature(item) = 'WEAP') then begin
-    // WeapTypeStaff [KYWD:0001E716]     VendorItemStaff [KYWD:000937A4]
-    if ( hasKeyword(item, 'WeapTypeStaff') or hasKeyword(item, 'VendorItemStaff') ) then begin
-      Result := true;
-    end else begin
-      tmp := GetElementEditValues(item, 'DNAM\Animation Type');
-      if Assigned(tmp) then begin
-        if (tmp = 'Staff') then begin
-          Result := true;
-        end;
-      end;
-    end;
-  end;
-end;
-
-function isTemperable(recordToCheck: IInterface): boolean;
-var
+  keywordRef: IInterface;
+  tmpKeywordsCollection: IInterface;
   i: integer;
-  tmp, bnam: IInterface;
 begin
   Result := false;
 
-  for i := 0 to ReferencedByCount(recordToCheck) - 1 do begin
-    tmp := ReferencedByIndex(recordToCheck, i);
-
-    if (Signature(tmp) = 'COBJ') then begin
-      if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
-        bnam := GetElementEditValues(tmp, 'BNAM');
-        if (
-          (bnam = 'CraftingSmithingSharpeningWheel [KYWD:00088108]')
-          or (bnam = 'CraftingSmithingArmorTable [KYWD:000ADB78]')
-        ) then begin
-          Result := true;
-          Break
-        end;
+  if hasKeyword(itemRecord, keywordEditorID) then begin
+    // get all keyword entries of provided record
+    tmpKeywordsCollection := ElementByPath(itemRecord, 'KWDA');
+    // loop through each
+    for i := 0 to ElementCount(tmpKeywordsCollection) - 1 do begin
+      keywordRef := LinksTo(ElementByIndex(tmpKeywordsCollection, i));
+      if GetElementEditValues(keywordRef, 'EDID') = keywordEditorID then begin
+        RemoveByIndex(tmpKeywordsCollection, i, true);
+        Result := true;
+        Break;
       end;
     end;
-
   end;
 end;
-
-function isCraftable(recordToCheck: IInterface): boolean;
-var
-  i: integer;
-  tmp, bnam: IInterface;
-begin
-  Result := false;
-
-  for i := 0 to ReferencedByCount(recordToCheck) - 1 do begin
-    tmp := ReferencedByIndex(recordToCheck, i);
-
-    if (Signature(tmp) = 'COBJ') then begin
-      if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
-        bnam := GetElementEditValues(tmp, 'BNAM');
-        if (
-          (bnam = 'CraftingSmithingForge [KYWD:00088105]')
-          or (bnam = 'CraftingSmelter [KYWD:000A5CCE]')
-          or (bnam = 'CraftingTanningRack [KYWD:0007866A]')
-        ) then begin
-          Result := true;
-          Break
-        end;
-
-      end;
-    end;
-
-  end;
-end;
-
-procedure FinalizeUtils;
-begin
-  if Assigned(materialKeywordsMap) then
-    materialKeywordsMap.Free;
-  if Assigned(materialItemsMap) then
-    materialItemsMap.Free;
-end;
-
 end.
