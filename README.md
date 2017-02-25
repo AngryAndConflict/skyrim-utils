@@ -1,5 +1,8 @@
 # skyrim-utils
-SSEEdit scripts and utilities library to provide higher level of abstraction for everyday modding of Skyrim.
+[SSEEdit](http://www.nexusmods.com/skyrimspecialedition/mods/164/?) scripts and utilities library to provide higher level of abstraction for everyday modding of Skyrim.
+
+## SSEEdit usage
+For basic usage in [SSEEdit](http://www.nexusmods.com/skyrimspecialedition/mods/164/?), you will only need SkyrimUtils.pas and scripts you want to use (like Skyrim - Make Temperable.pas). Put these files into your 'xEdit/Edit scripts' folder.
 
 ## individual scripts
 ### Skyrim - Make Craftable
