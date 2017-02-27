@@ -46,6 +46,8 @@ begin
 	end else if (Pos(recordSignature, EQUIPMENT_TYPE_IS_REQUIRED) <> 0) then begin
 		lintEquipmentType(recordToCheck, recordSignature);
 	end;
+
+	lintKeywords(recordToCheck, recordSignature);
 end;
 
 procedure lintStrings(recordToCheck: IInterface; recordSignature: string);
@@ -155,6 +157,13 @@ begin
 		end;
 
 	end;
+end;
+
+procedure lintKeywords(recordToCheck: IInterface; recordSignature: string);
+var
+	tmp: IInterface;
+begin
+
 end;
 
 function Process(selectedRecord: IInterface): integer;
