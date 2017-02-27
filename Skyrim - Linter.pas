@@ -163,7 +163,139 @@ procedure lintKeywords(recordToCheck: IInterface; recordSignature: string);
 var
 	tmp: IInterface;
 begin
+	if (isStaff(recordToCheck) and (recordSignature = 'WEAP')) then begin
+		if not hasKeyword(recordToCheck, 'WeapTypeStaff') then begin // WeapTypeStaff [KYWD:0001E716]
+			AddMessage(msgBad + ' item was recognized as Staff but WeapTypeStaff keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+			if tryToCorrect then begin
+				AddMessage(msgCorrection + ' adding WeapTypeStaff keyword : ' + msgHr + ' ' + Name(recordToCheck));
+				addKeyword(recordToCheck, 'WeapTypeStaff [KYWD:0001E716]');
+			end;
+		end else if not hasKeyword(recordToCheck, 'VendorItemStaff') then begin // VendorItemStaff [KYWD:000937A4]
+			AddMessage(msgBad + ' item was recognized as Staff but VendorItemStaff keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+			if tryToCorrect then begin
+				AddMessage(msgCorrection + ' adding VendorItemStaff keyword : ' + msgHr + ' ' + Name(recordToCheck));
+				addKeyword(recordToCheck, 'VendorItemStaff [KYWD:000937A4]');
+			end;
+		end else begin
+			tmp := GetElementEditValues(recordToCheck, 'DNAM\Animation Type');
+			if Assigned(tmp) then begin
+				if not (tmp = 'Staff') then begin
+					AddMessage(msgNote + ' item was recognized as Staff but Animation Type is not Staff ' + msgHr + ' ' + Name(recordToCheck));
+				end;
+			end;
+		end;
+	end;
 
+	if (((recordSignature = 'WEAP') or (recordSignature = 'ARMO') or (recordSignature = 'AMMO')) and not isStaff(recordToCheck)) then begin
+		// WEAP/ARMO/AMMO item records should have Material keyword
+		tmp := getMainMaterial(recordToCheck);
+		if not Assigned(tmp) then begin
+			AddMessage(msgReallyBad + ' keyword for Material definition is missing or not valid ' + msgHr + ' ' + Name(recordToCheck));
+		end;
+
+		// sellable item records should have right VendorItem keyword
+		if (recordSignature = 'WEAP') then begin
+			if not hasKeyword(recordToCheck, 'VendorItemWeapon') then begin
+				AddMessage(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
+				if tryToCorrect then begin
+					AddMessage(msgCorrection + ' adding VendorItemWeapon keyword : ' + msgHr + ' ' + Name(recordToCheck));
+					addKeyword(recordToCheck, 'VendorItem [KYWD:0008F958]');
+				end;
+			end;
+		end;
+
+		// sellable item records should have right VendorItem keyword
+		if (recordSignature = 'AMMO') then begin
+			if not hasKeyword(recordToCheck, 'VendorItemArrow') then begin // VendorItemArrow [KYWD:000917E7]
+				AddMessage(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
+				if tryToCorrect then begin
+					AddMessage(msgCorrection + ' adding VendorItem keyword : ' + msgHr + ' ' + Name(recordToCheck));
+					addKeyword(recordToCheck, 'VendorItemArrow [KYWD:000917E7]');
+				end;
+			end;
+		end;
+
+// ArmorHelmet [KYWD:0006C0EE]
+// ArmorHeavy [KYWD:0006BBD2]
+// ArmorJewelry [KYWD:0006BBE9]
+// ArmorLight [KYWD:0006BBD3]
+// ArmorCuirass [KYWD:0006C0EC]
+// ArmorClothing [KYWD:0006BBE8]
+// ArmorBoots [KYWD:0006C0ED]
+
+		if (recordSignature = 'ARMO') then begin
+
+			if isJewelry(recordToCheck) then begin
+
+				if not hasKeyword(recordToCheck, 'ArmorJewelry') then begin // ArmorJewelry [KYWD:0006BBE9]
+					AddMessage(msgBad + ' item was recognized as Jewelry but ArmorJewelry keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+					if tryToCorrect then begin
+						AddMessage(msgCorrection + ' adding ArmorJewelry keyword : ' + msgHr + ' ' + Name(recordToCheck));
+						addKeyword(recordToCheck, 'ArmorJewelry [KYWD:0006BBE9]');
+					end;
+				// sellable item records should have right VendorItem keyword
+				end else if not hasKeyword(recordToCheck, 'VendorItemJewelry') then begin // VendorItemJewelry [KYWD:0008F95A]
+					AddMessage(msgBad + ' item was recognized as Jewelry but VendorItemJewelry keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+					if tryToCorrect then begin
+						AddMessage(msgCorrection + ' adding VendorItemJewelry keyword : ' + msgHr + ' ' + Name(recordToCheck));
+						addKeyword(recordToCheck, 'VendorItemJewelry [KYWD:0008F95A]');
+					end;
+				end;
+
+	//			tmp := GetElementEditValues(recordToCheck, 'BOD2');
+	//			if not Assigned(tmp) then begin
+	//				AddMessage(msgReallyBad + ' item was recognized as Jewelry but BOD2 property is missing ' + msgHr + ' ' + Name(recordToCheck));
+	//			end else begin
+					tmp := GetElementEditValues(recordToCheck, 'BOD2\Armor Type');
+					if not Assigned(tmp) then begin
+						AddMessage(msgReallyBad + ' item was recognized as Jewelry but BOD2\Armor Type property is missing ' + msgHr + ' ' + Name(recordToCheck));
+					end else begin
+						if not (tmp = 'Clothing') then begin
+							AddMessage(msgNote + ' item was recognized as Jewelry but BOD2\Armor Type property is not Clothing ' + msgHr + ' ' + Name(recordToCheck));
+						end;
+					end;
+		//		end;
+
+				tmp := GetElementEditValues(recordToCheck, 'BOD2\First Person Flags');
+				if Assigned(tmp) then begin
+					if tmp = 000001 then begin // Amulet only
+						if not hasKeyword(recordToCheck, 'ClothingNecklace') then begin
+							AddMessage(msgBad + ' item is Amulet, but ClothingNecklace keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+							if tryToCorrect then begin
+								AddMessage(msgCorrection + ' adding ClothingNecklace keyword : ' + msgHr + ' ' + Name(recordToCheck));
+								addKeyword(recordToCheck, 'ClothingNecklace [KYWD:0010CD0A]');
+							end;
+						end;
+					end;
+				end;
+
+				if (getPrice(recordToCheck) > 1000) then begin
+					if not hasKeyword(recordToCheck, 'JewelryExpensive') then begin // JewelryExpensive [KYWD:000A8664]
+						AddMessage(msgNote + ' item was recognized as Jewelry, and it costs more than 1000 septims, it may need JewelryExpensive keyword ' + msgHr + ' ' + Name(recordToCheck));
+
+						if tryToCorrect then begin
+							AddMessage(msgCorrection + ' adding JewelryExpensive keyword : ' + msgHr + ' ' + Name(recordToCheck));
+							addKeyword(recordToCheck, 'JewelryExpensive [KYWD:000A8664]');
+						end;
+					end;
+				end;
+
+			// /isJewelry
+			end else begin
+				// sellable item records should have right VendorItem keyword
+				if not (hasKeyword(recordToCheck, 'VendorItemArmor') or hasKeyword(recordToCheck, 'VendorItemClothing')) then begin
+					AddMessage(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
+			//		if tryToCorrect then begin
+			//			AddMessage(msgCorrection + ' adding VendorItemArmor keyword : ' + msgHr + ' ' + Name(recordToCheck));
+			//			addKeyword(recordToCheck, 'VendorItemArmor [KYWD:0008F959]');
+			//		end;
+				end;
+
+			end; // /not isJewelry
+
+		end; // /ARMO
+
+	end;
 end;
 
 function Process(selectedRecord: IInterface): integer;
