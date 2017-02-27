@@ -39,6 +39,10 @@ begin
 		Exit;
 
 	lintStrings(recordToCheck, recordSignature);
+
+	if (itemType = 'NPC_') then begin
+		lintNPC(recordToCheck, recordSignature);
+	end;
 end;
 
 procedure lintStrings(recordToCheck: IInterface; recordSignature: string);
@@ -94,6 +98,9 @@ begin
 		end;
 	end;
 
+end;
+
+begin
 end;
 
 function Process(selectedRecord: IInterface): integer;
