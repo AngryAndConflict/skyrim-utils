@@ -22,6 +22,7 @@ const
 
 	EDITOR_ID_MAY_BE_REQUIRED = 'WEAP ARMO AMMO BOOK MISC LVLI CELL NPC_';
 	FULL_NAME_MAY_BE_REQUIRED = 'WEAP ARMO AMMO BOOK MISC NPC_';
+	EQUIPMENT_TYPE_IS_REQUIRED = 'WEAP ARMO';
 
 procedure lint(recordToCheck: IInterface);
 var
@@ -42,6 +43,8 @@ begin
 
 	if (recordSignature = 'NPC_') then begin
 		lintNPC(recordToCheck, recordSignature);
+	end else if (Pos(recordSignature, EQUIPMENT_TYPE_IS_REQUIRED) <> 0) then begin
+		lintEquipmentType(recordToCheck, recordSignature);
 	end;
 end;
 
