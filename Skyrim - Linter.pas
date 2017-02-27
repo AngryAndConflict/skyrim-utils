@@ -20,7 +20,7 @@ const
 
 	skipRecords = 'NAVM ACHR PGRE PHZD';
 
-	EDITOR_ID_MIGHT_BE_REQUIRED = 'WEAP ARMO AMMO BOOK MISC LVLI CELL NPC_';
+	EDITOR_ID_MAY_BE_REQUIRED = 'WEAP ARMO AMMO BOOK MISC LVLI CELL NPC_';
 	FULL_NAME_MAY_BE_REQUIRED = 'WEAP ARMO AMMO BOOK MISC NPC_';
 
 procedure lint(recordToCheck: IInterface);
@@ -45,7 +45,7 @@ procedure lintStrings(recordToCheck: IInterface; recordSignature: string);
 var
 	tmp: string;
 begin
-	if (Pos(recordSignature, EDITOR_ID_MIGHT_BE_REQUIRED) <> 0) then begin
+	if (Pos(recordSignature, EDITOR_ID_MAY_BE_REQUIRED) <> 0) then begin
 		tmp := GetElementEditValues(recordToCheck, 'EDID');
 
 		if not Assigned(tmp) then begin
