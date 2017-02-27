@@ -40,7 +40,6 @@ begin
 
 	lintStrings(recordToCheck, recordSignature);
 
-	if (itemType = 'NPC_') then begin
 		lintNPC(recordToCheck, recordSignature);
 	end;
 end;
@@ -101,8 +100,43 @@ begin
 end;
 
 procedure lintNPC(recordToCheck: IInterface; recordSignature: string);
-begin
+var
+	factionsList, ent,
+		faction, tmp: IInterface;
 
+	i: integer;
+	vendorFactionsList: TStringList;
+
+begin
+	if (recordSignature = 'NPC_') then begin
+		tmp := GetElementEditValues(recordToCheck, 'CNAM');
+
+		if not Assigned(tmp) then begin
+			AddMessage(msgNote + ' NPC does not have a Class ' + msgHr + ' ' + Name(recordToCheck));
+		end;
+
+		// vendor NPCs should not have more than 1 Vendor Faction
+		// based on 'Skyrim - List actors with more than one vendor faction'
+		vendorFactionsList := TStringList.Create;
+
+		factionsList := ElementByName(recordToCheck, 'Factions');
+
+		for i := 0 to Pred(ElementCount(factionsList)) do begin
+			ent := ElementByIndex(factionsList, i);
+			faction := LinksTo(ElementByName(ent, 'Faction'));
+
+			if GetElementNativeValues(faction, 'DATA\Flags') and $4000 > 0 then
+				vendorFactionsList.Add(Name(faction));
+
+		end;
+
+		if vendorFactionsList.Count > 1 then begin
+			AddMessage(msgReallyBad + ' NPC has more than 1 vendor faction ' + msgHr + Name(recordToCheck) + #13#10'Vendor Factions:'#13#10 + sl.Text);
+		end;
+
+		vendorFactionsList.Free;
+
+	end;
 end;
 
 function Process(selectedRecord: IInterface): integer;
