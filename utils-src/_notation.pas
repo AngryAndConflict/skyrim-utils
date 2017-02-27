@@ -13,11 +13,11 @@
 
   hasKeyword           (itemRecord: IInterface; keywordEditorID: str): bool;      // checks the provided keyword inside record
   addKeyword           (itemRecord: IInterface; keyword: IInterface): int;        // adds keyword to the record, if it doesn't have one
-  removeKeyword        (itemRecord: IInterface; keywordEditorID: string): bool;   // removess keyword to the record, if it has one, returns true if was found and removed, false if not
+  removeKeyword        (itemRecord: IInterface; keywordEditorID: string): bool;   // removes keyword to the record, if it has one, returns true if was found and removed, false if not
 
   createRecord         (recordFile: IwbFile; recordSignature: str): IInterface;   // creates new record inside provided file
 
-  removeInvalidEntries (rec: IInterface);                                         // removes invalid entries from containers and recipe items, from Leveled lists, NPCs and spells, based on 'Skyrim - Remove invalid entries'
+  removeInvalidEntries (rec: IInterface);                                         // removes nil\broken entries from containers and recipe items, from Leveled lists, NPCs and spells, based on 'Skyrim - Remove invalid entries'
 
   createRecipe         (itemRecord: IInterface): IInterface;                      // creates COBJ record for item, with referencing on it in amount of 1
   addPerkCondition     (listOrRecord: IInterface; perk: IInterface): IInterface;  // adds requirement 'HasPerk' to Conditions list or record

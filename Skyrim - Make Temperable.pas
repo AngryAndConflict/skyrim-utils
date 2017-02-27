@@ -23,10 +23,9 @@ var
 begin
   recordSignature := Signature(selectedRecord);
 
-  // filter selected records, which are not valid
-  // NOTE: only weapons and armors are exepted, for now
+  // filter selected records, which are invalid for script
   if not ((recordSignature = 'WEAP') or (recordSignature = 'ARMO')) then
-    exit;
+    Exit;
 
   makeTemperable(selectedRecord);
 

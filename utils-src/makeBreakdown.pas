@@ -4,7 +4,8 @@ var
   itemSignature: string;
 begin
   itemSignature := Signature(item);
-  // filter selected records, which are not valid
+
+  // filter selected records, which are invalid
   if not ((itemSignature = 'WEAP') or (itemSignature = 'ARMO')) then
     Exit;
 

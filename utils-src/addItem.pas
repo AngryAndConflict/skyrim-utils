@@ -19,6 +19,8 @@ begin
     // edit it to be leveled list entry
     SetElementEditValues(newItem, 'LVLO\Reference', GetEditValue(item));
     SetElementEditValues(newItem, 'LVLO\Count', amount);
+  end else begin
+    Exit;
   end;
 
   // remove nil records from list

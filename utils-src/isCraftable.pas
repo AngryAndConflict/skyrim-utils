@@ -11,6 +11,7 @@ begin
     if (Signature(tmp) = 'COBJ') then begin
       if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
         bnam := GetElementEditValues(tmp, 'BNAM');
+
         if (
           (bnam = 'CraftingSmithingForge [KYWD:00088105]')
           or (bnam = 'CraftingSmelter [KYWD:000A5CCE]')

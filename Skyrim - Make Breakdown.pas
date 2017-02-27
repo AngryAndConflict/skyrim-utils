@@ -10,7 +10,15 @@ uses SkyrimUtils;
 
 // for every record selected in xEdit
 function Process(selectedRecord: IInterface): integer;
+var
+  recordSignature: string;
 begin
+  recordSignature := Signature(selectedRecord);
+
+  // filter selected records, which are invalid for script
+  if not ((recordSignature = 'WEAP') or (recordSignature = 'ARMO')) then
+    Exit;
+
   makeBreakdown(selectedRecord);
   Result := 0;
 end;
