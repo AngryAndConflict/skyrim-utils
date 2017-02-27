@@ -40,6 +40,7 @@ begin
 
 	lintStrings(recordToCheck, recordSignature);
 
+	if (recordSignature = 'NPC_') then begin
 		lintNPC(recordToCheck, recordSignature);
 	end;
 end;
