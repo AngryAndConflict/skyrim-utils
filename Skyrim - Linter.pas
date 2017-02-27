@@ -143,6 +143,20 @@ begin
 	end;
 end;
 
+procedure lintEquipmentType(recordToCheck: IInterface; recordSignature: string);
+var
+	tmp: IInterface;
+begin
+	if (Pos(recordSignature, EQUIPMENT_TYPE_IS_REQUIRED) <> 0) then begin
+		tmp := GetElementEditValues(recordToCheck, 'ETYP');
+
+		if not Assigned(tmp) then begin
+			AddMessage(msgReallyBad + ' ETYP (Equipment Type) is missing ' + msgHr + ' ' + Name(recordToCheck));
+		end;
+
+	end;
+end;
+
 function Process(selectedRecord: IInterface): integer;
 begin
 	lint(selectedRecord);
