@@ -24,27 +24,27 @@ const
 
 procedure lint(recordToCheck: IInterface);
 var
-	itemSignature: string;
+	recordSignature: string;
 begin
 	if GetIsDeleted(recordToCheck) then begin
 		AddMessage(msgReallyBad + ' RECORD MARKED AS DELETED ' + msgHr + ' ' + Name(recordToCheck));
 		Exit;
 	end;
 
-	itemSignature := Signature(recordToCheck);
+	recordSignature := Signature(recordToCheck);
 
   // linter ignoring records
-	if (Pos(itemSignature, skipRecords) <> 0) then
+	if (Pos(recordSignature, skipRecords) <> 0) then
 		Exit;
 
-	lintStrings(recordToCheck, itemSignature);
+	lintStrings(recordToCheck, recordSignature);
 end;
 
-procedure lintStrings(recordToCheck: IInterface; itemType: string);
+procedure lintStrings(recordToCheck: IInterface; recordSignature: string);
 var
 	tmp: string;
 begin
-	if (Pos(itemType, EDITOR_ID_MIGHT_BE_REQUIRED) <> 0) then begin
+	if (Pos(recordSignature, EDITOR_ID_MIGHT_BE_REQUIRED) <> 0) then begin
 		tmp := GetElementEditValues(recordToCheck, 'EDID');
 
 		if not Assigned(tmp) then begin
