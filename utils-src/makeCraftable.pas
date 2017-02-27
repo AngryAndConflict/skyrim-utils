@@ -17,6 +17,7 @@ var
 begin
   itemSignature := Signature(itemRecord);
 
+  // filter selected records, which are invalid
   if not ((itemSignature = 'WEAP') or (itemSignature = 'ARMO')) then begin
     Exit;
   end;

@@ -1,5 +1,5 @@
 // based on Skyrim - Remove invalid entries
-// removes invalid entries from containers and recipe items, from Leveled lists, npcs and spells
+// removes invalid entries from containers and recipe items, from Leveled lists, NPCs and spells
 procedure removeInvalidEntries(rec: IInterface);
 var
   i, num: integer;

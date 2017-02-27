@@ -82,13 +82,13 @@ var
   enchLevelList, enchLevelListGroup: IInterface;
   workingFile: IwbFile;
   recordSignature: string;
+
 begin
   recordSignature := Signature(selectedRecord);
 
-  // filter selected records, which are not valid
-  // NOTE: only weapons and armors are exepted, for now
+  // filter selected records, which are invalid for script
   if not ((recordSignature = 'WEAP') or (recordSignature = 'ARMO')) then
-    exit;
+    Exit;
 
   // create Leveled List for proper destribution
   enchLevelList := createRecord(
@@ -97,7 +97,7 @@ begin
   );
 
   // set the flags
-  SetElementEditValues(enchLevelList, 'LVLF', 11); // NOTE: 11 => Calculate from all levels, and for each item in count
+  SetElementEditValues(enchLevelList, 'LVLF', 11); // 11 => Calculate from all levels, and for each item in count
 
   // define items group inside the Leveled List
   Add(enchLevelList, 'Leveled List Entries', true);

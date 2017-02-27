@@ -6,7 +6,6 @@ begin
   Result := 0;
   tmp := GetElementEditValues(item, 'DATA\Value');
 
-  if Assigned(tmp) then begin
+  if Assigned(tmp) then
     Result := tmp;
-  end;
 end;

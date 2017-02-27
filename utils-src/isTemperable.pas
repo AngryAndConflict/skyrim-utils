@@ -11,6 +11,7 @@ begin
     if (Signature(tmp) = 'COBJ') then begin
       if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
         bnam := GetElementEditValues(tmp, 'BNAM');
+  
         if (
           (bnam = 'CraftingSmithingSharpeningWheel [KYWD:00088108]')
           or (bnam = 'CraftingSmithingArmorTable [KYWD:000ADB78]')
@@ -18,6 +19,7 @@ begin
           Result := true;
           Break
         end;
+
       end;
     end;
 
