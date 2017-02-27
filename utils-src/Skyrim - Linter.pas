@@ -13,10 +13,10 @@ const
 	tryToCorrect = false;
 
   msgHr = '---------->';
-	msgReallyBad = '---BAD!---';
-	msgBad = '---Silent erorr---';
-	msgNote = '--notice: ';
-	msgCorrection = '-FIXING ATTEMPT--';
+  msgReallyBad = '---BAD!---';
+  msgBad = '---Silent erorr---';
+  msgNote = '--notice: ';
+  msgCorrection = '-FIXING ATTEMPT--';
 
   skipRecords = 'NAVM ACHR PGRE PHZD';
 
@@ -35,7 +35,7 @@ end;
 
 function Process(selectedRecord: IInterface): integer;
 begin
-
+  lint(selectedRecord);
 end;
 
 function Finalize: integer;
