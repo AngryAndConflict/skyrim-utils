@@ -100,7 +100,9 @@ begin
 
 end;
 
+procedure lintNPC(recordToCheck: IInterface; recordSignature: string);
 begin
+
 end;
 
 function Process(selectedRecord: IInterface): integer;
