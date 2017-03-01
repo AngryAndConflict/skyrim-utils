@@ -30,7 +30,7 @@ begin
   material := getMainMaterial(item);
 
   if not Assigned(material) then begin
-    log('WARNING: resulting component was not specified for - ' + Name(recipe));
+    warn('resulting component was not specified for - ' + Name(recipe));
   end else begin
     SetElementEditValues(recipe, 'CNAM', Name(material));
   end;

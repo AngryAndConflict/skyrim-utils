@@ -10,3 +10,8 @@ begin
     logMessage := #9 + msg;
   end;
 end;
+
+procedure warn(msg: string);
+begin
+  log('WARNING: ' + msg);
+end;
