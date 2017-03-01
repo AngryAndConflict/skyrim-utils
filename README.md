@@ -95,3 +95,8 @@ if not isCraftable(getRecordByFormID('02000801')) then
 ```
 #### makeBreakdown(item: IInterface): IInterface;
 Creates new COBJ record to allow breaking item to its main original material with proper amount.
+
+#### log(msg: string);
+Adds string to the script resulting log. Formats it with proper indentation.
+#### warn(msg:string);
+Shortcut for log function, but auto-prepends message with standardized warning caption indicator.
