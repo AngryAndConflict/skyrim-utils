@@ -158,6 +158,24 @@ begin
 	end;
 end;
 
+procedure lintAnimationType(recordToCheck: IInterface; recordSignature: string);
+var
+	tmp: IInterface;
+begin
+	if (recordSignature = 'WEAP') then begin
+		tmp := GetElementEditValues(recordToCheck, 'DNAM\Animation Type');
+
+		if Assigned(tmp) then begin
+			if isStaff(recordToCheck) then begin
+				if not (tmp = 'Staff') then begin
+					log(msgNote + ' item was recognized as Staff but Animation Type is not Staff ' + msgHr + ' ' + Name(recordToCheck));
+				end;
+			end;
+		end;
+
+	end;
+end;
+
 procedure lintKeywords(recordToCheck: IInterface; recordSignature: string);
 var
 	tmp: IInterface;
@@ -174,13 +192,6 @@ begin
 			if tryToCorrect then begin
 				log(msgCorrection + ' adding VendorItemStaff keyword : ' + msgHr + ' ' + Name(recordToCheck));
 				addKeyword(recordToCheck, 'VendorItemStaff [KYWD:000937A4]');
-			end;
-		end else begin
-			tmp := GetElementEditValues(recordToCheck, 'DNAM\Animation Type');
-			if Assigned(tmp) then begin
-				if not (tmp = 'Staff') then begin
-					log(msgNote + ' item was recognized as Staff but Animation Type is not Staff ' + msgHr + ' ' + Name(recordToCheck));
-				end;
 			end;
 		end;
 	end;
