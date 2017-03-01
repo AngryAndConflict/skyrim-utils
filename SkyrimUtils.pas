@@ -544,7 +544,7 @@ begin
     end;
 
   end;
-  
+
 end;
 function isTemperable(recordToCheck: IInterface): boolean;
 var
@@ -559,7 +559,7 @@ begin
     if (Signature(tmp) = 'COBJ') then begin
       if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
         bnam := GetElementEditValues(tmp, 'BNAM');
-  
+
         if (
           (bnam = 'CraftingSmithingSharpeningWheel [KYWD:00088108]')
           or (bnam = 'CraftingSmithingArmorTable [KYWD:000ADB78]')
@@ -576,7 +576,7 @@ end;
 // generic wrapper for logging control, to produce more readable logs
 procedure log(msg: string);
 begin
-  // if log string is not empty => separate it with full new line and propper tab indentation
+  // if log string is not empty => separate it with full new line and proper tab indentation
   if Assigned(logMessage) then begin
     logMessage := logMessage + #13#10#9 + msg;
 
