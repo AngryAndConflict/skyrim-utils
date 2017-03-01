@@ -13,9 +13,9 @@ const
 	tryToCorrect = false;
 
 	msgHr = '---------->';
-	msgReallyBad = '---BAD!---';
-	msgNote = '--notice: ';
-	msgCorrection = '-FIXING ATTEMPT--';
+	msgReallyBad = 'BAD!-->';
+	msgNote = 'notice: ';
+	msgCorrection = 'FIXING ATTEMPT:';
 
 	skipRecords = 'NAVM ACHR PGRE PHZD';
 
