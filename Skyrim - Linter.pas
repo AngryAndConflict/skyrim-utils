@@ -14,7 +14,6 @@ const
 
 	msgHr = '---------->';
 	msgReallyBad = '---BAD!---';
-	msgBad = '---Silent erorr---';
 	msgNote = '--notice: ';
 	msgCorrection = '-FIXING ATTEMPT--';
 
@@ -29,7 +28,7 @@ var
 	recordSignature: string;
 begin
 	if GetIsDeleted(recordToCheck) then begin
-		AddMessage(msgReallyBad + ' RECORD MARKED AS DELETED ' + msgHr + ' ' + Name(recordToCheck));
+		log(msgReallyBad + ' RECORD MARKED AS DELETED ' + msgHr + ' ' + Name(recordToCheck));
 		Exit;
 	end;
 
@@ -58,11 +57,11 @@ begin
 		tmp := GetElementEditValues(recordToCheck, 'EDID');
 
 		if not Assigned(tmp) then begin
-			AddMessage(msgReallyBad + ' EditorID is missing ' + msgHr + ' ' + Name(recordToCheck));
+			log(msgReallyBad + ' EditorID is missing ' + msgHr + ' ' + Name(recordToCheck));
 		end else if ((tmp = '') or (Length(tmp) = 0)) then begin
-			AddMessage(msgReallyBad + ' EditorID is empty string ' + msgHr + ' ' + Name(recordToCheck));
+			log(msgReallyBad + ' EditorID is empty string ' + msgHr + ' ' + Name(recordToCheck));
 		end else if (Length(tmp) < 5) then begin
-			AddMessage(msgBad + ' EditorID is too short to not become duplicate ' + msgHr + ' ' + Name(recordToCheck));
+			warn('EditorID is too short to not become duplicate ' + msgHr + ' ' + Name(recordToCheck));
 		end;
 	end;
 
@@ -70,15 +69,15 @@ begin
 		tmp := GetElementEditValues(recordToCheck, 'FULL');
 
 		if not Assigned(tmp) then begin
-			AddMessage(msgNote + ' FULL Name is missing ' + msgHr + ' ' + Name(recordToCheck));
+			log(msgNote + ' FULL Name is missing ' + msgHr + ' ' + Name(recordToCheck));
 
 		end else if ((tmp = '') or (Length(tmp) = 0)) then begin
-			AddMessage(msgNote + ' FULL Name is an empty string, it is recomanded to be deleted it if not using: ' + msgHr + ' ' + Name(recordToCheck));
+			log(msgNote + ' FULL Name is an empty string, it is recomanded to be deleted it if not using: ' + msgHr + ' ' + Name(recordToCheck));
 
 		end else if ((tmp[1] = ' ') or (tmp[Length(tmp)] = ' ')) then begin
-			AddMessage(msgBad + ' FULL NAME have trailing space, CK does not like that ' + msgHr + ' ' + Name(recordToCheck));
+			warn('FULL NAME have trailing space, CK does not like that ' + msgHr + ' ' + Name(recordToCheck));
 			if tryToCorrect then begin
-				AddMessage(msgCorrection + ' removing trailing spaces: ' + msgHr + ' ' + Name(recordToCheck));
+				log(msgCorrection + ' removing trailing spaces: ' + msgHr + ' ' + Name(recordToCheck));
 				SetElementEditValues(recordToCheck, 'FULL', Trim(tmp));
 			end;
 		end;
@@ -86,7 +85,7 @@ begin
 		tmp := GetElementEditValues(recordToCheck, 'FULL');
 		if Assigned(tmp) then begin
 			if (Length(tmp) > 33) then begin
-				AddMessage(msgBad + ' FULL NAME length is more than 33 characters, CK does not like that ' + msgHr + ' ' + Name(recordToCheck));
+				warn('FULL NAME length is more than 33 characters, CK does not like that ' + msgHr + ' ' + Name(recordToCheck));
 			end;
 		end;
 
@@ -96,7 +95,7 @@ begin
 			if Assigned(tmp) then begin
 				tmp := GetElementEditValues(recordToCheck, 'SHRT');
 				if not Assigned(tmp) then begin
-					AddMessage(msgNote + ' Short Name is missing for NPC, but FULL was provided ' + msgHr + ' ' + Name(recordToCheck));
+					log(msgNote + ' Short Name is missing for NPC, but FULL was provided ' + msgHr + ' ' + Name(recordToCheck));
 				end;
 			end;
 
@@ -118,7 +117,7 @@ begin
 		tmp := GetElementEditValues(recordToCheck, 'CNAM');
 
 		if not Assigned(tmp) then begin
-			AddMessage(msgNote + ' NPC does not have a Class ' + msgHr + ' ' + Name(recordToCheck));
+			log(msgNote + ' NPC does not have a Class ' + msgHr + ' ' + Name(recordToCheck));
 		end;
 
 		// vendor NPCs should not have more than 1 Vendor Faction
@@ -137,7 +136,7 @@ begin
 		end;
 
 		if vendorFactionsList.Count > 1 then begin
-			AddMessage(msgReallyBad + ' NPC has more than 1 vendor faction ' + msgHr + Name(recordToCheck) + #13#10'Vendor Factions:'#13#10 + sl.Text);
+			log(msgReallyBad + ' NPC has more than 1 vendor faction ' + msgHr + Name(recordToCheck) + #13#10'Vendor Factions:'#13#10 + sl.Text);
 		end;
 
 		vendorFactionsList.Free;
@@ -153,7 +152,7 @@ begin
 		tmp := GetElementEditValues(recordToCheck, 'ETYP');
 
 		if not Assigned(tmp) then begin
-			AddMessage(msgReallyBad + ' ETYP (Equipment Type) is missing ' + msgHr + ' ' + Name(recordToCheck));
+			log(msgReallyBad + ' ETYP (Equipment Type) is missing ' + msgHr + ' ' + Name(recordToCheck));
 		end;
 
 	end;
@@ -165,22 +164,22 @@ var
 begin
 	if (isStaff(recordToCheck) and (recordSignature = 'WEAP')) then begin
 		if not hasKeyword(recordToCheck, 'WeapTypeStaff') then begin // WeapTypeStaff [KYWD:0001E716]
-			AddMessage(msgBad + ' item was recognized as Staff but WeapTypeStaff keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+			warn('item was recognized as Staff but WeapTypeStaff keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
 			if tryToCorrect then begin
-				AddMessage(msgCorrection + ' adding WeapTypeStaff keyword : ' + msgHr + ' ' + Name(recordToCheck));
+				log(msgCorrection + ' adding WeapTypeStaff keyword : ' + msgHr + ' ' + Name(recordToCheck));
 				addKeyword(recordToCheck, 'WeapTypeStaff [KYWD:0001E716]');
 			end;
 		end else if not hasKeyword(recordToCheck, 'VendorItemStaff') then begin // VendorItemStaff [KYWD:000937A4]
-			AddMessage(msgBad + ' item was recognized as Staff but VendorItemStaff keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+			warn('item was recognized as Staff but VendorItemStaff keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
 			if tryToCorrect then begin
-				AddMessage(msgCorrection + ' adding VendorItemStaff keyword : ' + msgHr + ' ' + Name(recordToCheck));
+				log(msgCorrection + ' adding VendorItemStaff keyword : ' + msgHr + ' ' + Name(recordToCheck));
 				addKeyword(recordToCheck, 'VendorItemStaff [KYWD:000937A4]');
 			end;
 		end else begin
 			tmp := GetElementEditValues(recordToCheck, 'DNAM\Animation Type');
 			if Assigned(tmp) then begin
 				if not (tmp = 'Staff') then begin
-					AddMessage(msgNote + ' item was recognized as Staff but Animation Type is not Staff ' + msgHr + ' ' + Name(recordToCheck));
+					log(msgNote + ' item was recognized as Staff but Animation Type is not Staff ' + msgHr + ' ' + Name(recordToCheck));
 				end;
 			end;
 		end;
@@ -190,15 +189,15 @@ begin
 		// WEAP/ARMO/AMMO item records should have Material keyword
 		tmp := getMainMaterial(recordToCheck);
 		if not Assigned(tmp) then begin
-			AddMessage(msgReallyBad + ' keyword for Material definition is missing or not valid ' + msgHr + ' ' + Name(recordToCheck));
+			log(msgReallyBad + ' keyword for Material definition is missing or not valid ' + msgHr + ' ' + Name(recordToCheck));
 		end;
 
 		// sellable item records should have right VendorItem keyword
 		if (recordSignature = 'WEAP') then begin
 			if not hasKeyword(recordToCheck, 'VendorItemWeapon') then begin
-				AddMessage(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
+				log(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
 				if tryToCorrect then begin
-					AddMessage(msgCorrection + ' adding VendorItemWeapon keyword : ' + msgHr + ' ' + Name(recordToCheck));
+					log(msgCorrection + ' adding VendorItemWeapon keyword : ' + msgHr + ' ' + Name(recordToCheck));
 					addKeyword(recordToCheck, 'VendorItem [KYWD:0008F958]');
 				end;
 			end;
@@ -207,9 +206,9 @@ begin
 		// sellable item records should have right VendorItem keyword
 		if (recordSignature = 'AMMO') then begin
 			if not hasKeyword(recordToCheck, 'VendorItemArrow') then begin // VendorItemArrow [KYWD:000917E7]
-				AddMessage(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
+				log(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
 				if tryToCorrect then begin
-					AddMessage(msgCorrection + ' adding VendorItem keyword : ' + msgHr + ' ' + Name(recordToCheck));
+					log(msgCorrection + ' adding VendorItem keyword : ' + msgHr + ' ' + Name(recordToCheck));
 					addKeyword(recordToCheck, 'VendorItemArrow [KYWD:000917E7]');
 				end;
 			end;
@@ -228,30 +227,30 @@ begin
 			if isJewelry(recordToCheck) then begin
 
 				if not hasKeyword(recordToCheck, 'ArmorJewelry') then begin // ArmorJewelry [KYWD:0006BBE9]
-					AddMessage(msgBad + ' item was recognized as Jewelry but ArmorJewelry keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+					warn('item was recognized as Jewelry but ArmorJewelry keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
 					if tryToCorrect then begin
-						AddMessage(msgCorrection + ' adding ArmorJewelry keyword : ' + msgHr + ' ' + Name(recordToCheck));
+						log(msgCorrection + ' adding ArmorJewelry keyword : ' + msgHr + ' ' + Name(recordToCheck));
 						addKeyword(recordToCheck, 'ArmorJewelry [KYWD:0006BBE9]');
 					end;
 				// sellable item records should have right VendorItem keyword
 				end else if not hasKeyword(recordToCheck, 'VendorItemJewelry') then begin // VendorItemJewelry [KYWD:0008F95A]
-					AddMessage(msgBad + ' item was recognized as Jewelry but VendorItemJewelry keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+					warn('item was recognized as Jewelry but VendorItemJewelry keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
 					if tryToCorrect then begin
-						AddMessage(msgCorrection + ' adding VendorItemJewelry keyword : ' + msgHr + ' ' + Name(recordToCheck));
+						log(msgCorrection + ' adding VendorItemJewelry keyword : ' + msgHr + ' ' + Name(recordToCheck));
 						addKeyword(recordToCheck, 'VendorItemJewelry [KYWD:0008F95A]');
 					end;
 				end;
 
 	//			tmp := GetElementEditValues(recordToCheck, 'BOD2');
 	//			if not Assigned(tmp) then begin
-	//				AddMessage(msgReallyBad + ' item was recognized as Jewelry but BOD2 property is missing ' + msgHr + ' ' + Name(recordToCheck));
+	//				log(msgReallyBad + ' item was recognized as Jewelry but BOD2 property is missing ' + msgHr + ' ' + Name(recordToCheck));
 	//			end else begin
 					tmp := GetElementEditValues(recordToCheck, 'BOD2\Armor Type');
 					if not Assigned(tmp) then begin
-						AddMessage(msgReallyBad + ' item was recognized as Jewelry but BOD2\Armor Type property is missing ' + msgHr + ' ' + Name(recordToCheck));
+						log(msgReallyBad + ' item was recognized as Jewelry but BOD2\Armor Type property is missing ' + msgHr + ' ' + Name(recordToCheck));
 					end else begin
 						if not (tmp = 'Clothing') then begin
-							AddMessage(msgNote + ' item was recognized as Jewelry but BOD2\Armor Type property is not Clothing ' + msgHr + ' ' + Name(recordToCheck));
+							log(msgNote + ' item was recognized as Jewelry but BOD2\Armor Type property is not Clothing ' + msgHr + ' ' + Name(recordToCheck));
 						end;
 					end;
 		//		end;
@@ -260,9 +259,9 @@ begin
 				if Assigned(tmp) then begin
 					if tmp = 000001 then begin // Amulet only
 						if not hasKeyword(recordToCheck, 'ClothingNecklace') then begin
-							AddMessage(msgBad + ' item is Amulet, but ClothingNecklace keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+							warn('item is Amulet, but ClothingNecklace keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
 							if tryToCorrect then begin
-								AddMessage(msgCorrection + ' adding ClothingNecklace keyword : ' + msgHr + ' ' + Name(recordToCheck));
+								log(msgCorrection + ' adding ClothingNecklace keyword : ' + msgHr + ' ' + Name(recordToCheck));
 								addKeyword(recordToCheck, 'ClothingNecklace [KYWD:0010CD0A]');
 							end;
 						end;
@@ -271,10 +270,10 @@ begin
 
 				if (getPrice(recordToCheck) > 1000) then begin
 					if not hasKeyword(recordToCheck, 'JewelryExpensive') then begin // JewelryExpensive [KYWD:000A8664]
-						AddMessage(msgNote + ' item was recognized as Jewelry, and it costs more than 1000 septims, it may need JewelryExpensive keyword ' + msgHr + ' ' + Name(recordToCheck));
+						log(msgNote + ' item was recognized as Jewelry, and it costs more than 1000 septims, it may need JewelryExpensive keyword ' + msgHr + ' ' + Name(recordToCheck));
 
 						if tryToCorrect then begin
-							AddMessage(msgCorrection + ' adding JewelryExpensive keyword : ' + msgHr + ' ' + Name(recordToCheck));
+							log(msgCorrection + ' adding JewelryExpensive keyword : ' + msgHr + ' ' + Name(recordToCheck));
 							addKeyword(recordToCheck, 'JewelryExpensive [KYWD:000A8664]');
 						end;
 					end;
@@ -284,9 +283,9 @@ begin
 			end else begin
 				// sellable item records should have right VendorItem keyword
 				if not (hasKeyword(recordToCheck, 'VendorItemArmor') or hasKeyword(recordToCheck, 'VendorItemClothing')) then begin
-					AddMessage(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
+					log(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
 			//		if tryToCorrect then begin
-			//			AddMessage(msgCorrection + ' adding VendorItemArmor keyword : ' + msgHr + ' ' + Name(recordToCheck));
+			//			log(msgCorrection + ' adding VendorItemArmor keyword : ' + msgHr + ' ' + Name(recordToCheck));
 			//			addKeyword(recordToCheck, 'VendorItemArmor [KYWD:0008F959]');
 			//		end;
 				end;
