@@ -214,14 +214,6 @@ begin
 			end;
 		end;
 
-// ArmorHelmet [KYWD:0006C0EE]
-// ArmorHeavy [KYWD:0006BBD2]
-// ArmorJewelry [KYWD:0006BBE9]
-// ArmorLight [KYWD:0006BBD3]
-// ArmorCuirass [KYWD:0006C0EC]
-// ArmorClothing [KYWD:0006BBE8]
-// ArmorBoots [KYWD:0006C0ED]
-
 		if (recordSignature = 'ARMO') then begin
 
 			if isJewelry(recordToCheck) then begin
@@ -241,19 +233,14 @@ begin
 					end;
 				end;
 
-	//			tmp := GetElementEditValues(recordToCheck, 'BOD2');
-	//			if not Assigned(tmp) then begin
-	//				log(msgReallyBad + ' item was recognized as Jewelry but BOD2 property is missing ' + msgHr + ' ' + Name(recordToCheck));
-	//			end else begin
-					tmp := GetElementEditValues(recordToCheck, 'BOD2\Armor Type');
-					if not Assigned(tmp) then begin
-						log(msgReallyBad + ' item was recognized as Jewelry but BOD2\Armor Type property is missing ' + msgHr + ' ' + Name(recordToCheck));
-					end else begin
-						if not (tmp = 'Clothing') then begin
-							log(msgNote + ' item was recognized as Jewelry but BOD2\Armor Type property is not Clothing ' + msgHr + ' ' + Name(recordToCheck));
-						end;
+				tmp := GetElementEditValues(recordToCheck, 'BOD2\Armor Type');
+				if not Assigned(tmp) then begin
+					log(msgReallyBad + ' item was recognized as Jewelry but BOD2\Armor Type property is missing ' + msgHr + ' ' + Name(recordToCheck));
+				end else begin
+					if not (tmp = 'Clothing') then begin
+						log(msgNote + ' item was recognized as Jewelry but BOD2\Armor Type property is not Clothing ' + msgHr + ' ' + Name(recordToCheck));
 					end;
-		//		end;
+				end;
 
 				tmp := GetElementEditValues(recordToCheck, 'BOD2\First Person Flags');
 				if Assigned(tmp) then begin
@@ -281,6 +268,13 @@ begin
 
 			// /isJewelry
 			end else begin
+				// ArmorHelmet [KYWD:0006C0EE]
+				// ArmorHeavy [KYWD:0006BBD2]
+				// ArmorLight [KYWD:0006BBD3]
+				// ArmorCuirass [KYWD:0006C0EC]
+				// ArmorClothing [KYWD:0006BBE8]
+				// ArmorBoots [KYWD:0006C0ED]
+
 				// sellable item records should have right VendorItem keyword
 				if not (hasKeyword(recordToCheck, 'VendorItemArmor') or hasKeyword(recordToCheck, 'VendorItemClothing')) then begin
 					log(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
