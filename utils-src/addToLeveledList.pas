@@ -10,7 +10,7 @@ begin
     1 // amount of items
   );
 
-  // set destribution level
+  // set distribution level
   SetElementEditValues(listElement, 'LVLO\Level', level);
 
   Result := listElement;

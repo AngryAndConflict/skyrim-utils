@@ -5,7 +5,7 @@ begin
   if Assigned(logMessage) then begin
     logMessage := logMessage + #13#10#9 + msg;
 
-  // not empty => only preppend with tab
+  // not empty => only prepend with tab
   end else begin
     logMessage := #9 + msg;
   end;

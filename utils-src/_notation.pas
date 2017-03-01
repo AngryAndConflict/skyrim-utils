@@ -1,5 +1,5 @@
 {
-  Bunch of Skyrim specific utilits to write scripts on higher level of abstraction.
+  Bunch of Skyrim specific utilities to write scripts on higher level of abstraction.
 
   isTemperable         (recordToCheck: IInterface): boolean;                      // determines if item have tempering recipe
   isCraftable          (recordToCheck: IInterface): boolean;                      // determines if item have crafting recipe

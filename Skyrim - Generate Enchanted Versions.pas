@@ -4,7 +4,7 @@
 
   All enchanted versions will have it's proper Temper COBJ records as well.
   Also, for each selected WEAP/ARMO record, will be created a Leveled List, with Base item + all it's enchanted versions. Each with count of 1, and based on enchantment level requirement
-  NOTE: Should be applyed on records inside WEAPON/ARMOR (WEAP/ARMO) category of plugin you want to edit (script will not create new plugin)
+  NOTE: Should be applied on records inside WEAPON/ARMOR (WEAP/ARMO) category of plugin you want to edit (script will not create new plugin)
   NOTE: So script works with Weapons/Shields/Bags/Bandanas/Armor/Clothing/Amulets/Wigs... every thing, but script won't find right item requirements for tempering wig or amulet... probably... However it will make a recipe, and it will log a message with link on that recipe, in this case, you can simply delete Tempering record or edit it... that is your Skyrim after all :O)
 }
 
@@ -90,7 +90,7 @@ begin
   if not ((recordSignature = 'WEAP') or (recordSignature = 'ARMO')) then
     Exit;
 
-  // create Leveled List for proper destribution
+  // create Leveled List for proper distribution
   enchLevelList := createRecord(
     GetFile(selectedRecord), // plugin
     'LVLI' // category
@@ -104,7 +104,7 @@ begin
 
   enchLevelListGroup := ElementByPath(enchLevelList, 'Leveled List Entries');
 
-  // add selected record for vanilish style of rare stuff
+  // add selected record for vanillish style of rare stuff
   addToLeveledList(enchLevelList, selectedRecord, 1);
 
   // remove automatic zero entry

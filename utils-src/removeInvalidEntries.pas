@@ -6,24 +6,24 @@ var
   lst, ent: IInterface;
   recordSignature,
     refName, // path to FormID reference relative to list's entry
-    countname // counter subrecord to update
+    countname // counter sub record to update
   : string;
 begin
   recordSignature := Signature(rec);
 
-  // containers and constractable objects
+  // containers and constructible objects
   if (recordSignature = 'CONT') or (recordSignature = 'COBJ') then begin
     lst := ElementByName(rec, 'Items');
     refName := 'CNTO\Item';
     countname := 'COCT';
   end
-  // leveled items, npcs and spells
+  // leveled items, NPCs and spells
   else if (recordSignature = 'LVLI') or (recordSignature = 'LVLN') or (recordSignature = 'LVSP') then begin
     lst := ElementByName(rec, 'Leveled List Entries');
     refName := 'LVLO\Reference';
     countname := 'LLCT';
   end
-  // Outfites
+  // Outfits
   else if recordSignature = 'OTFT' then begin
     lst := ElementByName(rec, 'INAM');
     refName := 'item';
@@ -44,10 +44,10 @@ begin
 
   // has counter
   if Assigned(countname) then begin
-    // update counter subrecord
+    // update counter sub record
     if num <> ElementCount(lst) then begin
       num := ElementCount(lst);
-      // set new value or remove subrecord if list is empty (like CK does)
+      // set new value or remove sub record if list is empty (like CK does)
       if num > 0 then
         SetElementNativeValues(rec, countname, num)
       else

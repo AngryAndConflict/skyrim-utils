@@ -1,7 +1,7 @@
 {
-  Script generates recipe COBJ record for selected WEAP/ARMO records, to allow breaking item to its original main material, with HasItem conditions and prefixes.
+  Script generates recipe COBJ record for selected WEAP/ARMO records, to allow breaking item to its original main material, with 'HasItem' conditions and prefixes.
 
-  NOTE: Should be applyed on records inside WEAPON/ARMOR (WEAP/ARMO) category of plugin you want to edit (script will not create new plugin)
+  NOTE: Should be applied on records inside WEAPON/ARMOR (WEAP/ARMO) category of plugin you want to edit (script will not create new plugin)
 }
 
 unit GenerateBreakdowns;

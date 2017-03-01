@@ -16,7 +16,7 @@ Automatically generates Tempering recipe for selected WEAP/ARMO records. Adds al
 
 ### Skyrim - Generate Enchanted Versions
 Automatically generates Enchanted Versions for selected WEAP/ARMO records.
-Currently Script generates 31 enchanted copies of selected weapons per each, adds enchantment, alters new records value, and adds respected Suffixes for easy parsing and replace.
+Script generates 31 enchanted copies of selected weapons per each, adds enchantment, alters new records value, and adds respected Suffixes for easy parsing and replace.
 * For armors script will make only one enchanted copy per each, for now.
 * All enchanted versions will have it's proper Temper COBJ records as well.
 * For each selected record, will be created an individual Leveled List, with Base item + all it's enchanted versions. Each with count of 1, and based on enchantment level requirement
@@ -72,7 +72,7 @@ Removes keyword to the record, if it has one, returns true if was found and remo
 Removes invalid entries from containers and recipe items, from Leveled lists, NPCs and spells, based on 'Skyrim - Remove invalid entries'.
 
 #### addPerkCondition(listOrRecord: IInterface; perk: IInterface): IInterface;
-Adds requirement 'HasPerk' to Conditions list or record with conditions capability.
+Adds 'HasPerk' requirement to Conditions list or record with conditions capability.
 #### addHasItemCondition(listOrRecord: IInterface; item: IInterface): IInterface;
 Adds conditions to record or list, defining that player has got an item in inventory. If item can be equipped will add two conditions to check if it is equipped, and if so, if player has more than one such item in inventory.
 
