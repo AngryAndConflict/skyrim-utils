@@ -13,11 +13,11 @@
 
   hasKeyword           (itemRecord: IInterface; keywordEditorID: str): bool;      // checks the provided keyword inside record
   addKeyword           (itemRecord: IInterface; keyword: IInterface): int;        // adds keyword to the record, if it doesn't have one
-  removeKeyword        (itemRecord: IInterface; keywordEditorID: string): bool;   // removess keyword to the record, if it has one, returns true if was found and removed, false if not
+  removeKeyword        (itemRecord: IInterface; keywordEditorID: string): bool;   // removes keyword to the record, if it has one, returns true if was found and removed, false if not
 
   createRecord         (recordFile: IwbFile; recordSignature: str): IInterface;   // creates new record inside provided file
 
-  removeInvalidEntries (rec: IInterface);                                         // removes invalid entries from containers and recipe items, from Leveled lists, NPCs and spells, based on 'Skyrim - Remove invalid entries'
+  removeInvalidEntries (rec: IInterface);                                         // removes nil\broken entries from containers and recipe items, from Leveled lists, NPCs and spells, based on 'Skyrim - Remove invalid entries'
 
   createRecipe         (itemRecord: IInterface): IInterface;                      // creates COBJ record for item, with referencing on it in amount of 1
   addPerkCondition     (listOrRecord: IInterface; perk: IInterface): IInterface;  // adds requirement 'HasPerk' to Conditions list or record
@@ -58,6 +58,7 @@ var
   isUtilsInitialized: boolean;
   materialKeywordsMap: TStringList;
   materialItemsMap: TStringList;
+  logMessage: string; // logging storage
 // adds conditions defining that player has got an item in inventory
 function addHasItemCondition(list: IInterface; item: IInterface): IInterface;
 var
@@ -146,6 +147,8 @@ begin
     // edit it to be leveled list entry
     SetElementEditValues(newItem, 'LVLO\Reference', GetEditValue(item));
     SetElementEditValues(newItem, 'LVLO\Count', amount);
+  end else begin
+    Exit;
   end;
 
   // remove nil records from list
@@ -277,8 +280,12 @@ procedure FinalizeUtils;
 begin
   if Assigned(materialKeywordsMap) then
     materialKeywordsMap.Free;
+
   if Assigned(materialItemsMap) then
     materialItemsMap.Free;
+
+  if Assigned(logMessage) then
+    AddMessage(logMessage);
 end;
 // will try to figure out right material for provided item record
 function getMainMaterial(itemRecord: IInterface): IInterface;
@@ -309,7 +316,7 @@ begin
     end;
 
     if not Assigned(resultItem) then begin
-      AddMessage('WARNING: no material keywords were found for - ' + Name(itemRecord));
+      warn('no material keywords were found for - ' + Name(itemRecord));
     end else begin
       Result := resultItem;
     end;
@@ -324,9 +331,8 @@ begin
   Result := 0;
   tmp := GetElementEditValues(item, 'DATA\Value');
 
-  if Assigned(tmp) then begin
+  if Assigned(tmp) then
     Result := tmp;
-  end;
 end;
 // gets record by its HEX FormID
 function getRecordByFormID(id: string): IInterface;
@@ -360,8 +366,10 @@ var
   i: integer;
 begin
   Result := false;
+
   // get all keyword entries of provided record
   tmpKeywordsCollection := ElementByPath(itemRecord, 'KWDA');
+
   // loop through each
   for i := 0 to ElementCount(tmpKeywordsCollection) - 1 do begin
     if GetElementEditValues(LinksTo(ElementByIndex(tmpKeywordsCollection, i)), 'EDID') = keywordEditorID then begin
@@ -369,6 +377,7 @@ begin
       Break;
     end;
   end;
+
 end;
 procedure initUtils;
 var
@@ -482,6 +491,7 @@ begin
     if (Signature(tmp) = 'COBJ') then begin
       if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
         bnam := GetElementEditValues(tmp, 'BNAM');
+
         if (
           (bnam = 'CraftingSmithingForge [KYWD:00088105]')
           or (bnam = 'CraftingSmelter [KYWD:000A5CCE]')
@@ -530,7 +540,9 @@ begin
         end;
       end;
     end;
+
   end;
+  
 end;
 function isTemperable(recordToCheck: IInterface): boolean;
 var
@@ -545,6 +557,7 @@ begin
     if (Signature(tmp) = 'COBJ') then begin
       if (GetElementEditValues(tmp, 'CNAM') = Name(recordToCheck)) then begin
         bnam := GetElementEditValues(tmp, 'BNAM');
+  
         if (
           (bnam = 'CraftingSmithingSharpeningWheel [KYWD:00088108]')
           or (bnam = 'CraftingSmithingArmorTable [KYWD:000ADB78]')
@@ -552,10 +565,28 @@ begin
           Result := true;
           Break
         end;
+
       end;
     end;
 
   end;
+end;
+// generic wrapper for logging control, to produce more readable logs
+procedure log(msg: string);
+begin
+  // if log string is not empty => separate it with full new line and propper tab indentation
+  if Assigned(logMessage) then begin
+    logMessage := logMessage + #13#10#9 + msg;
+
+  // not empty => only preppend with tab
+  end else begin
+    logMessage := #9 + msg;
+  end;
+end;
+
+procedure warn(msg: string);
+begin
+  log('WARNING: ' + msg);
 end;
 function makeBreakdown(item: IInterface): IInterface;
 var
@@ -563,7 +594,8 @@ var
   itemSignature: string;
 begin
   itemSignature := Signature(item);
-  // filter selected records, which are not valid
+
+  // filter selected records, which are invalid
   if not ((itemSignature = 'WEAP') or (itemSignature = 'ARMO')) then
     Exit;
 
@@ -588,7 +620,7 @@ begin
   material := getMainMaterial(item);
 
   if not Assigned(material) then begin
-    AddMessage('WARNING: resulting component was not specified for - ' + Name(recipe));
+    warn('resulting component was not specified for - ' + Name(recipe));
   end else begin
     SetElementEditValues(recipe, 'CNAM', Name(material));
   end;
@@ -616,6 +648,7 @@ var
 begin
   itemSignature := Signature(itemRecord);
 
+  // filter selected records, which are invalid
   if not ((itemSignature = 'WEAP') or (itemSignature = 'ARMO')) then begin
     Exit;
   end;
@@ -763,7 +796,7 @@ begin
   // figure out required component...
   tmp := getMainMaterial(itemRecord);
   if not Assigned(tmp) then begin
-    AddMessage('WARNING: main component item requirement was not specified for - ' + Name(recipeCraft));
+    warn('main component item requirement was not specified for - ' + Name(recipeCraft));
   end else begin
     addItem(recipeItems, tmp, amountOfMainComponent);
   end;
@@ -775,7 +808,7 @@ begin
   removeInvalidEntries(recipeCraft);
 
   if GetElementEditValues(recipeCraft, 'COCT') = '' then begin
-    AddMessage('WARNING: no item requirements was specified for - ' + Name(recipeCraft));
+    warn('no item requirements was specified for - ' + Name(recipeCraft));
   end;
 
   // return created tempering recipe, just in case
@@ -842,14 +875,14 @@ begin
   removeInvalidEntries(recipeTemper);
 
   if GetElementEditValues(recipeTemper, 'COCT') = '' then begin
-    AddMessage('WARNING: no item requirements was specified for - ' + Name(recipeTemper));
+    warn('no item requirements was specified for - ' + Name(recipeTemper));
   end;
 
   // return created tempering recipe, just in case
   Result := recipeTemper;
 end;
 // based on Skyrim - Remove invalid entries
-// removes invalid entries from containers and recipe items, from Leveled lists, npcs and spells
+// removes invalid entries from containers and recipe items, from Leveled lists, NPCs and spells
 procedure removeInvalidEntries(rec: IInterface);
 var
   i, num: integer;
@@ -908,8 +941,7 @@ end;
 // removes keyword to the record, if it has one
 function removeKeyword(itemRecord: IInterface; keywordEditorID: string): boolean;
 var
-  keywordRef: IInterface;
-  tmpKeywordsCollection: IInterface;
+  keywordRef, tmpKeywordsCollection: IInterface;
   i: integer;
 begin
   Result := false;
@@ -920,12 +952,15 @@ begin
     // loop through each
     for i := 0 to ElementCount(tmpKeywordsCollection) - 1 do begin
       keywordRef := LinksTo(ElementByIndex(tmpKeywordsCollection, i));
+
       if GetElementEditValues(keywordRef, 'EDID') = keywordEditorID then begin
         RemoveByIndex(tmpKeywordsCollection, i, true);
         Result := true;
         Break;
       end;
+
     end;
   end;
+
 end;
 end.
