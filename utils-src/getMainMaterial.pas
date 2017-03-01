@@ -27,7 +27,7 @@ begin
     end;
 
     if not Assigned(resultItem) then begin
-      AddMessage('WARNING: no material keywords were found for - ' + Name(itemRecord));
+      log('WARNING: no material keywords were found for - ' + Name(itemRecord));
     end else begin
       Result := resultItem;
     end;

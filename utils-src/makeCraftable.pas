@@ -165,7 +165,7 @@ begin
   // figure out required component...
   tmp := getMainMaterial(itemRecord);
   if not Assigned(tmp) then begin
-    AddMessage('WARNING: main component item requirement was not specified for - ' + Name(recipeCraft));
+    log('WARNING: main component item requirement was not specified for - ' + Name(recipeCraft));
   end else begin
     addItem(recipeItems, tmp, amountOfMainComponent);
   end;
@@ -177,7 +177,7 @@ begin
   removeInvalidEntries(recipeCraft);
 
   if GetElementEditValues(recipeCraft, 'COCT') = '' then begin
-    AddMessage('WARNING: no item requirements was specified for - ' + Name(recipeCraft));
+    log('WARNING: no item requirements was specified for - ' + Name(recipeCraft));
   end;
 
   // return created tempering recipe, just in case

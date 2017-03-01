@@ -59,7 +59,7 @@ begin
   removeInvalidEntries(recipeTemper);
 
   if GetElementEditValues(recipeTemper, 'COCT') = '' then begin
-    AddMessage('WARNING: no item requirements was specified for - ' + Name(recipeTemper));
+    log('WARNING: no item requirements was specified for - ' + Name(recipeTemper));
   end;
 
   // return created tempering recipe, just in case
