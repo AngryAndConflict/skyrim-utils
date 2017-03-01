@@ -47,6 +47,7 @@ begin
 	end;
 
 	lintKeywords(recordToCheck, recordSignature);
+	lintAnimationType(recordToCheck, recordSignature);
 end;
 
 procedure lintStrings(recordToCheck: IInterface; recordSignature: string);
@@ -248,21 +249,27 @@ begin
 				if not Assigned(tmp) then begin
 					log(msgReallyBad + ' item was recognized as Jewelry but BOD2\Armor Type property is missing ' + msgHr + ' ' + Name(recordToCheck));
 				end else begin
+
 					if not (tmp = 'Clothing') then begin
 						log(msgNote + ' item was recognized as Jewelry but BOD2\Armor Type property is not Clothing ' + msgHr + ' ' + Name(recordToCheck));
 					end;
+
 				end;
 
 				tmp := GetElementEditValues(recordToCheck, 'BOD2\First Person Flags');
 				if Assigned(tmp) then begin
 					if tmp = 000001 then begin // Amulet only
+
 						if not hasKeyword(recordToCheck, 'ClothingNecklace') then begin
 							warn('item is Amulet, but ClothingNecklace keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+
 							if tryToCorrect then begin
 								log(msgCorrection + ' adding ClothingNecklace keyword : ' + msgHr + ' ' + Name(recordToCheck));
 								addKeyword(recordToCheck, 'ClothingNecklace [KYWD:0010CD0A]');
 							end;
+
 						end;
+
 					end;
 				end;
 
@@ -289,10 +296,12 @@ begin
 				// sellable item records should have right VendorItem keyword
 				if not (hasKeyword(recordToCheck, 'VendorItemArmor') or hasKeyword(recordToCheck, 'VendorItemClothing')) then begin
 					log(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
-			//		if tryToCorrect then begin
-			//			log(msgCorrection + ' adding VendorItemArmor keyword : ' + msgHr + ' ' + Name(recordToCheck));
-			//			addKeyword(recordToCheck, 'VendorItemArmor [KYWD:0008F959]');
-			//		end;
+
+					if tryToCorrect then begin
+						log(msgCorrection + ' adding VendorItemArmor keyword : ' + msgHr + ' ' + Name(recordToCheck));
+						addKeyword(recordToCheck, 'VendorItemArmor [KYWD:0008F959]');
+					end;
+
 				end;
 
 			end; // /not isJewelry
