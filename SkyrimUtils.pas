@@ -59,6 +59,8 @@ var
   materialKeywordsMap: TStringList;
   materialItemsMap: TStringList;
   logMessage: string; // logging storage
+
+
 // adds conditions defining that player has got an item in inventory
 function addHasItemCondition(list: IInterface; item: IInterface): IInterface;
 var
