@@ -22,3 +22,4 @@ var
   isUtilsInitialized: boolean;
   materialKeywordsMap: TStringList;
   materialItemsMap: TStringList;
+  logMessage: string;

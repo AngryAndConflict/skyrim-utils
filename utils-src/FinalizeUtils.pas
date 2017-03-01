@@ -6,4 +6,7 @@ begin
 
   if Assigned(materialItemsMap) then
     materialItemsMap.Free;
+
+  if Assigned(logMessage) then
+    AddMessage(logMessage);
 end;
