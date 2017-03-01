@@ -88,7 +88,7 @@ begin
     end;
 
   end else if (itemSignature = 'ARMO') then begin
-    amountOfAdditionalComponent := amountOfAdditionalComponent + 1; // increment just to prove the concept of future tweeking
+    amountOfAdditionalComponent := amountOfAdditionalComponent + 1; // increment just to prove the concept of future tweaking
     // set EditorID for recipe
     SetElementEditValues(recipeCraft, 'EDID', 'RecipeArmor' + GetElementEditValues(itemRecord, 'EDID'));
 
