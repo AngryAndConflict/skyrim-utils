@@ -86,7 +86,7 @@ begin
 			log(msgNote + ' FULL Name is missing ' + msgHr + ' ' + Name(recordToCheck));
 
 		end else if ((tmp = '') or (Length(tmp) = 0)) then begin
-			log(msgNote + ' FULL Name is an empty string, it is recomanded to be deleted it if not using: ' + msgHr + ' ' + Name(recordToCheck));
+			log(msgNote + ' FULL Name is an empty string, it is recommended to be deleted it if not using: ' + msgHr + ' ' + Name(recordToCheck));
 
 		end else if ((tmp[1] = ' ') or (tmp[Length(tmp)] = ' ')) then begin
 			warn('FULL NAME have trailing space, CK does not like that ' + msgHr + ' ' + Name(recordToCheck));
@@ -214,13 +214,13 @@ begin
 		// WEAP/ARMO/AMMO item records should have Material keyword
 		tmp := getMainMaterial(recordToCheck);
 		if not Assigned(tmp) then begin
-			log(msgReallyBad + ' keyword for Material definition is missing or not valid ' + msgHr + ' ' + Name(recordToCheck));
+			log(msgReallyBad + ' keyword for Material definition is missing or invalid ' + msgHr + ' ' + Name(recordToCheck));
 		end;
 
 		// sellable item records should have right VendorItem keyword
 		if (recordSignature = 'WEAP') then begin
 			if not hasKeyword(recordToCheck, 'VendorItemWeapon') then begin
-				log(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
+				log(msgReallyBad + ' VendorItem keyword is missed or invalid ' + msgHr + ' ' + Name(recordToCheck));
 				if tryToCorrect then begin
 					log(msgCorrection + ' adding VendorItemWeapon keyword ' + msgHr + ' ' + Name(recordToCheck));
 					addKeyword(recordToCheck, 'VendorItem [KYWD:0008F958]');
@@ -231,7 +231,7 @@ begin
 		// sellable item records should have right VendorItem keyword
 		if (recordSignature = 'AMMO') then begin
 			if not hasKeyword(recordToCheck, 'VendorItemArrow') then begin // VendorItemArrow [KYWD:000917E7]
-				log(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
+				log(msgReallyBad + ' VendorItem keyword is missed or invalid ' + msgHr + ' ' + Name(recordToCheck));
 				if tryToCorrect then begin
 					log(msgCorrection + ' adding VendorItem keyword ' + msgHr + ' ' + Name(recordToCheck));
 					addKeyword(recordToCheck, 'VendorItemArrow [KYWD:000917E7]');
@@ -308,7 +308,7 @@ begin
 
 				// sellable item records should have right VendorItem keyword
 				if not (hasKeyword(recordToCheck, 'VendorItemArmor') or hasKeyword(recordToCheck, 'VendorItemClothing')) then begin
-					log(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
+					log(msgReallyBad + ' VendorItem keyword is missed or invalid ' + msgHr + ' ' + Name(recordToCheck));
 
 					if tryToCorrect then begin
 						log(msgCorrection + ' adding VendorItemArmor keyword ' + msgHr + ' ' + Name(recordToCheck));
