@@ -34,6 +34,7 @@ const
 	EDITOR_ID_MAY_BE_REQUIRED = 'WEAP ARMO AMMO BOOK MISC LVLI CELL NPC_';
 	FULL_NAME_MAY_BE_REQUIRED = 'WEAP ARMO AMMO BOOK MISC NPC_';
 	EQUIPMENT_TYPE_IS_REQUIRED = 'WEAP ARMO';
+	PRICE_CONSIDERED_EXPENSIVE = 1000;
 
 procedure lint(recordToCheck: IInterface);
 var
@@ -285,7 +286,7 @@ begin
 					end;
 				end;
 
-				if (getPrice(recordToCheck) > 1000) then begin
+				if (getPrice(recordToCheck) > PRICE_CONSIDERED_EXPENSIVE) then begin
 					if not hasKeyword(recordToCheck, 'JewelryExpensive') then begin // JewelryExpensive [KYWD:000A8664]
 						log(msgNote + ' item was recognized as Jewelry, and it costs more than 1000 septims, it may need JewelryExpensive keyword ' + msgHr + ' ' + Name(recordToCheck));
 
