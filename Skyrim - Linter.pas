@@ -222,7 +222,7 @@ begin
 			if not hasKeyword(recordToCheck, 'VendorItemWeapon') then begin
 				log(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
 				if tryToCorrect then begin
-					log(msgCorrection + ' adding VendorItemWeapon keyword : ' + msgHr + ' ' + Name(recordToCheck));
+					log(msgCorrection + ' adding VendorItemWeapon keyword ' + msgHr + ' ' + Name(recordToCheck));
 					addKeyword(recordToCheck, 'VendorItem [KYWD:0008F958]');
 				end;
 			end;
@@ -233,7 +233,7 @@ begin
 			if not hasKeyword(recordToCheck, 'VendorItemArrow') then begin // VendorItemArrow [KYWD:000917E7]
 				log(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
 				if tryToCorrect then begin
-					log(msgCorrection + ' adding VendorItem keyword : ' + msgHr + ' ' + Name(recordToCheck));
+					log(msgCorrection + ' adding VendorItem keyword ' + msgHr + ' ' + Name(recordToCheck));
 					addKeyword(recordToCheck, 'VendorItemArrow [KYWD:000917E7]');
 				end;
 			end;
@@ -246,14 +246,14 @@ begin
 				if not hasKeyword(recordToCheck, 'ArmorJewelry') then begin // ArmorJewelry [KYWD:0006BBE9]
 					warn('item was recognized as Jewelry but ArmorJewelry keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
 					if tryToCorrect then begin
-						log(msgCorrection + ' adding ArmorJewelry keyword : ' + msgHr + ' ' + Name(recordToCheck));
+						log(msgCorrection + ' adding ArmorJewelry keyword ' + msgHr + ' ' + Name(recordToCheck));
 						addKeyword(recordToCheck, 'ArmorJewelry [KYWD:0006BBE9]');
 					end;
 				// sellable item records should have right VendorItem keyword
 				end else if not hasKeyword(recordToCheck, 'VendorItemJewelry') then begin // VendorItemJewelry [KYWD:0008F95A]
 					warn('item was recognized as Jewelry but VendorItemJewelry keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
 					if tryToCorrect then begin
-						log(msgCorrection + ' adding VendorItemJewelry keyword : ' + msgHr + ' ' + Name(recordToCheck));
+						log(msgCorrection + ' adding VendorItemJewelry keyword ' + msgHr + ' ' + Name(recordToCheck));
 						addKeyword(recordToCheck, 'VendorItemJewelry [KYWD:0008F95A]');
 					end;
 				end;
@@ -277,7 +277,7 @@ begin
 							warn('item is Amulet, but ClothingNecklace keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
 
 							if tryToCorrect then begin
-								log(msgCorrection + ' adding ClothingNecklace keyword : ' + msgHr + ' ' + Name(recordToCheck));
+								log(msgCorrection + ' adding ClothingNecklace keyword ' + msgHr + ' ' + Name(recordToCheck));
 								addKeyword(recordToCheck, 'ClothingNecklace [KYWD:0010CD0A]');
 							end;
 
@@ -288,10 +288,10 @@ begin
 
 				if (getPrice(recordToCheck) > PRICE_CONSIDERED_EXPENSIVE) then begin
 					if not hasKeyword(recordToCheck, 'JewelryExpensive') then begin // JewelryExpensive [KYWD:000A8664]
-						log(msgNote + ' item was recognized as Jewelry, and it costs more than 1000 septims, it may need JewelryExpensive keyword ' + msgHr + ' ' + Name(recordToCheck));
+						log(msgNote + ' item was recognized as Jewelry, and it costs more than ' + PRICE_CONSIDERED_EXPENSIVE + ' septims, it may need JewelryExpensive keyword ' + msgHr + ' ' + Name(recordToCheck));
 
 						if tryToCorrect then begin
-							log(msgCorrection + ' adding JewelryExpensive keyword : ' + msgHr + ' ' + Name(recordToCheck));
+							log(msgCorrection + ' adding JewelryExpensive keyword ' + msgHr + ' ' + Name(recordToCheck));
 							addKeyword(recordToCheck, 'JewelryExpensive [KYWD:000A8664]');
 						end;
 					end;
@@ -311,7 +311,7 @@ begin
 					log(msgReallyBad + ' VendorItem keyword is missed or not valid ' + msgHr + ' ' + Name(recordToCheck));
 
 					if tryToCorrect then begin
-						log(msgCorrection + ' adding VendorItemArmor keyword : ' + msgHr + ' ' + Name(recordToCheck));
+						log(msgCorrection + ' adding VendorItemArmor keyword ' + msgHr + ' ' + Name(recordToCheck));
 						addKeyword(recordToCheck, 'VendorItemArmor [KYWD:0008F959]');
 					end;
 
