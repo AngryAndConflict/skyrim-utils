@@ -1,4 +1,14 @@
 {
+	WARNING: it can, and probably will, hurt your feelings. You were warned.
+	Linter checks selected records for bad patterns and not proper ways of using Skyrim mechanics.
+		Few examples of behavior:
+			xEdit won't shout an error if you are using more than 33 letters for FULL in record, but Creation Kit does, so Linter does that too.
+			xEdit is more flexible and generic tool, so it won't check you are using right keywords in your mod, CK lacks that too... Linter will tell you that, and even will try to fix that
+
+	------------------------
+
+	This Linter is not following exact definition part of linters, because it can automatically fix some reporting "errors", but won't do that by default.
+	For this feature, change tryToCorrect setting to true. It's experimental, so, please, as always you should, make a backup just in case, it won't save changes automatically, but it is a good practice to always have a backup.
 
 	------------------------
 	Hotkey: Ctrl+l
@@ -11,14 +21,16 @@ uses SkyrimUtils;
 const
 	// =Settings
 	tryToCorrect = false;
+	skipRecords = 'NAVM ACHR PGRE PHZD';
 
 	msgHr = '---------->';
+
+	// messages prefixes
 	msgReallyBad = 'BAD!-->';
 	msgNote = 'notice: ';
 	msgCorrection = 'FIXING ATTEMPT:';
 
-	skipRecords = 'NAVM ACHR PGRE PHZD';
-
+	// logical definitions
 	EDITOR_ID_MAY_BE_REQUIRED = 'WEAP ARMO AMMO BOOK MISC LVLI CELL NPC_';
 	FULL_NAME_MAY_BE_REQUIRED = 'WEAP ARMO AMMO BOOK MISC NPC_';
 	EQUIPMENT_TYPE_IS_REQUIRED = 'WEAP ARMO';
