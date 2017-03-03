@@ -103,7 +103,7 @@ begin
 			log(msgNote + ' FULL Name is missing ' + msgHr + ' ' + Name(recordToCheck));
 
 		end else if ((tmp = '') or (Length(tmp) = 0)) then begin
-			log(msgNote + ' FULL Name is an empty string, it is recommended to be deleted it if not using: ' + msgHr + ' ' + Name(recordToCheck));
+			log(msgNote + ' FULL Name is an empty string, it is recommended to be deleted it if not needed ' + msgHr + ' ' + Name(recordToCheck));
 
 		end else if ((tmp[1] = ' ') or (tmp[Length(tmp)] = ' ')) then begin
 			warn('FULL NAME have trailing space, CK does not like that ' + msgHr + ' ' + Name(recordToCheck));
@@ -118,12 +118,8 @@ begin
 			if (Length(tmp) > 33) then begin
 				warn('FULL NAME length is more than 33 characters, CK does not like that ' + msgHr + ' ' + Name(recordToCheck));
 			end;
-		end;
 
-		if (recordSignature = 'NPC_') then begin
-			tmp := GetElementEditValues(recordToCheck, 'FULL');
-
-			if Assigned(tmp) then begin
+			if (recordSignature = 'NPC_') then begin
 				tmp := GetElementEditValues(recordToCheck, 'SHRT');
 				if not Assigned(tmp) then begin
 					log(msgNote + ' Short Name is missing for NPC, but FULL was provided ' + msgHr + ' ' + Name(recordToCheck));
@@ -131,6 +127,7 @@ begin
 			end;
 
 		end;
+
 	end;
 
 end;
