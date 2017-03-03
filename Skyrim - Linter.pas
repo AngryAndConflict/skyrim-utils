@@ -36,6 +36,23 @@ const
 	EQUIPMENT_TYPE_IS_REQUIRED = 'WEAP ARMO';
 	PRICE_CONSIDERED_EXPENSIVE = 1000;
 
+// shallow way to recognize item as Shield
+function isShield(item: IInterface): boolean;
+var
+  tmp: IInterface;
+begin
+	Result := false;
+
+	if (Signature(item) = 'ARMO') then begin
+		tmp := GetElementEditValues(item, 'ETYP');
+		if (Assigned(tmp) and (tmp = 'Shield [EQUP:000141E8]')) then begin
+			Result := true;
+		end else if hasKeyword(item, 'ArmorShield') then begin
+			Result := true;
+		end;
+	end;
+end;
+
 procedure lint(recordToCheck: IInterface);
 var
 	recordSignature: string;
@@ -317,19 +334,14 @@ begin
 
 				end;
 
-				tmp := GetElementEditValues(recordToCheck, 'ETYP');
-				if Assigned(tmp) then begin
-
-					if (tmp = 'Shield [EQUP:000141E8]') then begin
-						if not hasKeyword(recordToCheck, 'ArmorShield') then begin // ArmorShield [KYWD:000965B2]
-							warn('item was recognized as Shield, but ArmorShield keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
-							if tryToCorrect then begin
-								log(msgCorrection + ' adding ArmorShield keyword ' + msgHr + ' ' + Name(recordToCheck));
-								addKeyword(recordToCheck, 'ArmorShield [KYWD:000965B2]');
-							end;
+				if isShield(recordToCheck) then begin
+					if not hasKeyword(recordToCheck, 'ArmorShield') then begin // ArmorShield [KYWD:000965B2]
+						warn('item was recognized as Shield, but ArmorShield keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+						if tryToCorrect then begin
+							log(msgCorrection + ' adding ArmorShield keyword ' + msgHr + ' ' + Name(recordToCheck));
+							addKeyword(recordToCheck, 'ArmorShield [KYWD:000965B2]');
 						end;
 					end;
-
 				end;
 
 			end; // /not isJewelry
