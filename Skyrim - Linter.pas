@@ -33,7 +33,6 @@ const
 	// logical definitions
 	EDITOR_ID_MAY_BE_REQUIRED = 'WEAP ARMO AMMO BOOK MISC LVLI CELL NPC_';
 	FULL_NAME_MAY_BE_REQUIRED = 'WEAP ARMO AMMO BOOK MISC NPC_';
-	EQUIPMENT_TYPE_IS_REQUIRED = 'WEAP ARMO';
 	PRICE_CONSIDERED_EXPENSIVE = 1000;
 
 // shallow way to recognize item as Shield
@@ -72,7 +71,7 @@ begin
 
 	if (recordSignature = 'NPC_') then begin
 		lintNPC(recordToCheck, recordSignature);
-	end else if (Pos(recordSignature, EQUIPMENT_TYPE_IS_REQUIRED) <> 0) then begin
+	end else if (Pos(recordSignature, 'WEAP ARMO') <> 0) then begin
 		lintEquipmentType(recordToCheck, recordSignature);
 	end;
 
@@ -179,7 +178,7 @@ procedure lintEquipmentType(recordToCheck: IInterface; recordSignature: string);
 var
 	tmp: IInterface;
 begin
-	if (Pos(recordSignature, EQUIPMENT_TYPE_IS_REQUIRED) <> 0) then begin
+	if ((recordSignature = 'WEAP') or ((recordSignature = 'ARMO') and isShield(recordToCheck) )) then begin
 		tmp := GetElementEditValues(recordToCheck, 'ETYP');
 
 		if not Assigned(tmp) then begin
