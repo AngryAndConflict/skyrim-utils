@@ -317,6 +317,21 @@ begin
 
 				end;
 
+				tmp := GetElementEditValues(recordToCheck, 'ETYP');
+				if Assigned(tmp) then begin
+
+					if (tmp = 'Shield [EQUP:000141E8]') then begin
+						if not hasKeyword(recordToCheck, 'ArmorShield') then begin // ArmorShield [KYWD:000965B2]
+							warn('item was recognized as Shield, but ArmorShield keyword is missing ' + msgHr + ' ' + Name(recordToCheck));
+							if tryToCorrect then begin
+								log(msgCorrection + ' adding ArmorShield keyword ' + msgHr + ' ' + Name(recordToCheck));
+								addKeyword(recordToCheck, 'ArmorShield [KYWD:000965B2]');
+							end;
+						end;
+					end;
+
+				end;
+
 			end; // /not isJewelry
 
 		end; // /ARMO
