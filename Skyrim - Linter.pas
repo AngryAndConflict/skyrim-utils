@@ -50,6 +50,7 @@ begin
 			Result := true;
 		end;
 	end;
+
 end;
 
 procedure lint(recordToCheck: IInterface);
