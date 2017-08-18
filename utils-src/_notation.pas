@@ -5,6 +5,7 @@
   isCraftable          (recordToCheck: IInterface): boolean;                      // determines if item have crafting recipe
   isJewelry            (item: IInterface): boolean;                               // shallow way to recognize item as Jewelry
   isStaff              (item: IInterface): boolean;                               // shallow way to recognize item as Staff
+  isShield             (item: IInterface): boolean;                               // shallow way to recognize item as Shield
 
   addItem              (list: IInterface; item: IInterface; amount: int) AddedListElement: IInterface;  // adds item to list, like items/Leveled entries
   addToLeveledList     (list: IInterface; entry: IInterface; level: int) AddedListElement: IInterface;  // adds item reference to the leveled list
