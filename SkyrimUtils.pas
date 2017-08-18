@@ -5,6 +5,7 @@
   isCraftable          (recordToCheck: IInterface): boolean;                      // determines if item have crafting recipe
   isJewelry            (item: IInterface): boolean;                               // shallow way to recognize item as Jewelry
   isStaff              (item: IInterface): boolean;                               // shallow way to recognize item as Staff
+  isShield             (item: IInterface): boolean;                               // shallow way to recognize item as Shield
 
   addItem              (list: IInterface; item: IInterface; amount: int) AddedListElement: IInterface;  // adds item to list, like items/Leveled entries
   addToLeveledList     (list: IInterface; entry: IInterface; level: int) AddedListElement: IInterface;  // adds item reference to the leveled list
@@ -537,6 +538,24 @@ begin
   end;
 end;
 
+// shallow way to recognize item as Shield
+function isShield(item: IInterface): boolean;
+var
+  tmp: IInterface;
+begin
+	Result := false;
+
+	if (Signature(item) = 'ARMO') then begin
+		tmp := GetElementEditValues(item, 'ETYP');
+		if (Assigned(tmp) and (tmp = 'Shield [EQUP:000141E8]')) then begin
+			Result := true;
+		end else if hasKeyword(item, 'ArmorShield') then begin
+			Result := true;
+		end;
+	end;
+
+end;
+
 // shallow way to recognize item as Staff
 function isStaff(item: IInterface): boolean;
 var
@@ -838,127 +857,127 @@ end;
 // creates new COBJ record to make item Temperable
 function makeTemperable(itemRecord: IInterface): IInterface;
 var
-  recipeTemper,
-    recipeCondition, recipeConditions,
-    recipeItem, recipeItems
-  : IInterface;
+	recipeTemper,
+		recipeCondition, recipeConditions,
+		recipeItem, recipeItems
+	: IInterface;
 begin
-  recipeTemper := createRecipe(itemRecord);
+	recipeTemper := createRecipe(itemRecord);
 
-  // add new condition list
-  Add(recipeTemper, 'Conditions', true);
-  // get reference to condition list inside recipe
-  recipeConditions := ElementByPath(recipeTemper, 'Conditions');
+	// add new condition list
+	Add(recipeTemper, 'Conditions', true);
+	// get reference to condition list inside recipe
+	recipeConditions := ElementByPath(recipeTemper, 'Conditions');
 
-  // add IsEnchanted condition
-  // get new condition from list
-  recipeCondition := ElementByIndex(recipeConditions, 0);
-  // set type to Not equal to / Or
-  SetElementEditValues(recipeCondition, 'CTDA - \Type', '00010000');
-  // set some needed properties
-  SetElementEditValues(recipeCondition, 'CTDA - \Comparison Value', '1');
-  SetElementEditValues(recipeCondition, 'CTDA - \Function', 'EPTemperingItemIsEnchanted');
-  SetElementEditValues(recipeCondition, 'CTDA - \Run On', 'Subject');
-  // don't know what is this, but it should be equal to -1, if Function Runs On Subject
-  SetElementEditValues(recipeCondition, 'CTDA - \Parameter #3', '-1');
+	// add IsEnchanted condition
+	// get new condition from list
+	recipeCondition := ElementByIndex(recipeConditions, 0);
+	// set type to 'Not equal to / Or'
+	SetElementEditValues(recipeCondition, 'CTDA - \Type', '00010000');
+	// set some needed properties
+	SetElementEditValues(recipeCondition, 'CTDA - \Comparison Value', '1');
+	SetElementEditValues(recipeCondition, 'CTDA - \Function', 'EPTemperingItemIsEnchanted');
+	SetElementEditValues(recipeCondition, 'CTDA - \Run On', 'Subject');
+	// don't know what is this, but it should be equal to -1, if Function Runs On Subject
+	SetElementEditValues(recipeCondition, 'CTDA - \Parameter #3', '-1');
 
-  // add second condition, for perk ArcaneBlacksmith check
-  addPerkCondition(recipeConditions, getRecordByFormID('0005218E')); // ArcaneBlacksmith
+	// add second condition, for perk ArcaneBlacksmith check
+	addPerkCondition(recipeConditions, getRecordByFormID('0005218E')); // ArcaneBlacksmith
 
-  // add required items list
-  Add(recipeTemper, 'items', true);
-  // get reference to required items list inside recipe
-  recipeItems := ElementByPath(recipeTemper, 'items');
+	// add required items list
+	Add(recipeTemper, 'items', true);
+	// get reference to required items list inside recipe
+	recipeItems := ElementByPath(recipeTemper, 'items');
 
-  if Signature(itemRecord) = 'WEAP' then begin
-    // set EditorID for recipe
-    SetElementEditValues(recipeTemper, 'EDID', 'TemperWeapon' + GetElementEditValues(itemRecord, 'EDID'));
+	if Signature(itemRecord) = 'WEAP' then begin
+		// set EditorID for recipe
+		SetElementEditValues(recipeTemper, 'EDID', 'TemperWeapon' + GetElementEditValues(itemRecord, 'EDID'));
 
-    // add reference to the workbench keyword
-    SetElementEditValues(recipeTemper, 'BNAM', GetEditValue(
-      getRecordByFormID(WEAPON_TEMPERING_WORKBENCH_FORM_ID)
-    ));
+		// add reference to the workbench keyword
+		SetElementEditValues(recipeTemper, 'BNAM', GetEditValue(
+			getRecordByFormID(WEAPON_TEMPERING_WORKBENCH_FORM_ID)
+		));
 
-  end else if Signature(itemRecord) = 'ARMO' then begin
-    // set EditorID for recipe
-    SetElementEditValues(recipeTemper, 'EDID', 'TemperArmor' + GetElementEditValues(itemRecord, 'EDID'));
+	end else if Signature(itemRecord) = 'ARMO' then begin
+		// set EditorID for recipe
+		SetElementEditValues(recipeTemper, 'EDID', 'TemperArmor' + GetElementEditValues(itemRecord, 'EDID'));
 
-    // add reference to the workbench keyword
-    SetElementEditValues(recipeTemper, 'BNAM', GetEditValue(
-      getRecordByFormID(ARMOR_TEMPERING_WORKBENCH_FORM_ID)
-    ));
-  end;
+		// add reference to the workbench keyword
+		SetElementEditValues(recipeTemper, 'BNAM', GetEditValue(
+			getRecordByFormID(ARMOR_TEMPERING_WORKBENCH_FORM_ID)
+		));
+	end;
 
-  // figure out required component...
-  addItem(recipeItems, getMainMaterial(itemRecord), 1);
+	// figure out required component...
+	addItem(recipeItems, getMainMaterial(itemRecord), 1);
 
-  // remove nil record in items requirements, if any
-  removeInvalidEntries(recipeTemper);
+	// remove nil record in items requirements, if any
+	removeInvalidEntries(recipeTemper);
 
-  if GetElementEditValues(recipeTemper, 'COCT') = '' then begin
-    warn('no item requirements was specified for - ' + Name(recipeTemper));
-  end;
+	if GetElementEditValues(recipeTemper, 'COCT') = '' then begin
+		warn('no item requirements was specified for - ' + Name(recipeTemper));
+	end;
 
-  // return created tempering recipe, just in case
-  Result := recipeTemper;
+	// return created tempering recipe, just in case
+	Result := recipeTemper;
 end;
 
 // based on Skyrim - Remove invalid entries
 // removes invalid entries from containers and recipe items, from Leveled lists, NPCs and spells
 procedure removeInvalidEntries(rec: IInterface);
 var
-  i, num: integer;
-  lst, ent: IInterface;
-  recordSignature,
-    refName, // path to FormID reference relative to list's entry
-    countname // counter sub record to update
-  : string;
+	i, num: integer;
+	lst, ent: IInterface;
+	recordSignature,
+		refName, // path to FormID reference relative to list's entry
+		countname // counter sub record to update
+	: string;
 begin
-  recordSignature := Signature(rec);
+	recordSignature := Signature(rec);
 
-  // containers and constructible objects
-  if (recordSignature = 'CONT') or (recordSignature = 'COBJ') then begin
-    lst := ElementByName(rec, 'Items');
-    refName := 'CNTO\Item';
-    countname := 'COCT';
-  end
-  // leveled items, NPCs and spells
-  else if (recordSignature = 'LVLI') or (recordSignature = 'LVLN') or (recordSignature = 'LVSP') then begin
-    lst := ElementByName(rec, 'Leveled List Entries');
-    refName := 'LVLO\Reference';
-    countname := 'LLCT';
-  end
-  // Outfits
-  else if recordSignature = 'OTFT' then begin
-    lst := ElementByName(rec, 'INAM');
-    refName := 'item';
-  end;
+	// containers and constructible objects
+	if (recordSignature = 'CONT') or (recordSignature = 'COBJ') then begin
+		lst := ElementByName(rec, 'Items');
+		refName := 'CNTO\Item';
+		countname := 'COCT';
+	end
+	// leveled items, NPCs and spells
+	else if (recordSignature = 'LVLI') or (recordSignature = 'LVLN') or (recordSignature = 'LVSP') then begin
+		lst := ElementByName(rec, 'Leveled List Entries');
+		refName := 'LVLO\Reference';
+		countname := 'LLCT';
+	end
+	// Outfits
+	else if recordSignature = 'OTFT' then begin
+		lst := ElementByName(rec, 'INAM');
+		refName := 'item';
+	end;
 
-  if not Assigned(lst) then
-    Exit;
+	if not Assigned(lst) then
+		Exit;
 
-  num := ElementCount(lst);
-  // check from the end since removing items will shift indexes
-  for i := num - 1 downto 0 do begin
-    // get individual entry element
-    ent := ElementByIndex(lst, i);
-    // Check() returns error string if any or empty string if no errors
-    if Check(ElementByPath(ent, refName)) <> '' then
-      Remove(ent);
-  end;
+	num := ElementCount(lst);
+	// check from the end since removing items will shift indexes
+	for i := num - 1 downto 0 do begin
+		// get individual entry element
+		ent := ElementByIndex(lst, i);
+		// Check() returns error string if any or empty string
+		if Check(ElementByPath(ent, refName)) <> '' then
+			Remove(ent);
+	end;
 
-  // has counter
-  if Assigned(countname) then begin
-    // update counter sub record
-    if num <> ElementCount(lst) then begin
-      num := ElementCount(lst);
-      // set new value or remove sub record if list is empty (like CK does)
-      if num > 0 then
-        SetElementNativeValues(rec, countname, num)
-      else
-        RemoveElement(rec, countname);
-    end;
-  end;
+	// has counter
+	if Assigned(countname) then begin
+		// update counter sub record
+		if num <> ElementCount(lst) then begin
+			num := ElementCount(lst);
+			// set new value or remove sub record if list is empty (like Creation Kit does)
+			if num > 0 then
+				SetElementNativeValues(rec, countname, num)
+			else
+				RemoveElement(rec, countname);
+		end;
+	end;
 end;
 
 // removes keyword to the record, if it has one
