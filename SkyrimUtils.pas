@@ -33,7 +33,6 @@
   makeBreakdown        (item: IInterface): IInterface;														// creates new COBJ record to allow breaking item to its material
 }
 
-
 unit SkyrimUtils;
 
 // =Settings
@@ -60,6 +59,18 @@ var
   materialItemsMap: TStringList;
   logMessage: string; // logging storage
 
+// will free lists out of memory, if needed
+procedure FinalizeUtils;
+begin
+  if Assigned(materialKeywordsMap) then
+    materialKeywordsMap.Free;
+
+  if Assigned(materialItemsMap) then
+    materialItemsMap.Free;
+
+  if Assigned(logMessage) then
+    AddMessage(logMessage);
+end;
 
 // adds conditions defining that player has got an item in inventory
 function addHasItemCondition(list: IInterface; item: IInterface): IInterface;
@@ -128,6 +139,7 @@ begin
 
   Result := newCondition;
 end;
+
 // adds item record reference to the list
 function addItem(list: IInterface; item: IInterface; amount: integer): IInterface;
 var
@@ -158,6 +170,7 @@ begin
 
   Result := newItem;
 end;
+
 // adds keyword to the record, if it doesn't have one
 function addKeyword(itemRecord: IInterface; keyword: IInterface): integer;
 var
@@ -178,6 +191,7 @@ begin
     SetEditValue(keywordRef, GetEditValue(keyword));
   end;
 end;
+
 // adds requirement 'HasPerk' to Conditions list
 function addPerkCondition(list: IInterface; perk: IInterface): IInterface;
 var
@@ -217,6 +231,7 @@ begin
 
   Result := newCondition;
 end;
+
 // adds item reference to the leveled list
 function addToLeveledList(list: IInterface; entry: IInterface; level: integer): IInterface;
 var
@@ -234,6 +249,7 @@ begin
 
   Result := listElement;
 end;
+
 // calculates amount of material needed to craft an item
 function calcAmountOfMainMaterial(itemRecord: IInterface): Integer;
 var
@@ -246,6 +262,7 @@ begin
     Result := 1 + round(itemWeight * 0.2);
   end;
 end;
+
 // creates COBJ record for item
 function createRecipe(item: IInterface): IInterface;
 var
@@ -261,6 +278,7 @@ begin
 
   Result := recipe;
 end;
+
 // creates new record inside provided file
 function createRecord(recordFile: IwbFile; recordSignature: string): IInterface;
 var
@@ -277,18 +295,7 @@ begin
   // create record and return it
   Result := Add(newRecordGroup, recordSignature, true);
 end;
-// will free lists out of memory, if needed
-procedure FinalizeUtils;
-begin
-  if Assigned(materialKeywordsMap) then
-    materialKeywordsMap.Free;
 
-  if Assigned(materialItemsMap) then
-    materialItemsMap.Free;
-
-  if Assigned(logMessage) then
-    AddMessage(logMessage);
-end;
 // will try to figure out right material for provided item record
 function getMainMaterial(itemRecord: IInterface): IInterface;
 var
@@ -325,6 +332,7 @@ begin
 
   end;
 end;
+
 // gets price value of item
 function getPrice(item: IInterface): integer;
 var
@@ -336,6 +344,7 @@ begin
   if Assigned(tmp) then
     Result := tmp;
 end;
+
 // gets record by its HEX FormID
 function getRecordByFormID(id: string): IInterface;
 var
@@ -361,6 +370,7 @@ begin
     end;
   end;
 end;
+
 // checks the provided keyword inside record
 function hasKeyword(itemRecord: IInterface; keywordEditorID: string): boolean;
 var
@@ -381,6 +391,7 @@ begin
   end;
 
 end;
+
 procedure initUtils;
 var
   i: integer;
@@ -480,6 +491,7 @@ begin
     // DLC1ArmorMaterialVampire - not temperable/craftable ? O_o
   end;
 end;
+
 function isCraftable(recordToCheck: IInterface): boolean;
 var
   i: integer;
@@ -508,6 +520,7 @@ begin
 
   end;
 end;
+
 // shallow way to recognize item as Jewelry
 function isJewelry(item: IInterface): boolean;
 begin
@@ -523,6 +536,7 @@ begin
     end;
   end;
 end;
+
 // shallow way to recognize item as Staff
 function isStaff(item: IInterface): boolean;
 var
@@ -546,6 +560,7 @@ begin
   end;
   
 end;
+
 function isTemperable(recordToCheck: IInterface): boolean;
 var
   i: integer;
@@ -573,6 +588,7 @@ begin
 
   end;
 end;
+
 // generic wrapper for logging control, to produce more readable logs
 procedure log(msg: string);
 begin
@@ -590,6 +606,7 @@ procedure warn(msg: string);
 begin
   log('WARNING: ' + msg);
 end;
+
 function makeBreakdown(item: IInterface): IInterface;
 var
   recipe, recipeItems, material: IInterface;
@@ -631,6 +648,7 @@ begin
 
   Result := recipe;
 end;
+
 // creates new COBJ record to make item Craftable at workbenches
 function makeCraftable(itemRecord: IInterface): IInterface;
 var
@@ -816,6 +834,7 @@ begin
   // return created tempering recipe, just in case
   Result := recipeCraft;
 end;
+
 // creates new COBJ record to make item Temperable
 function makeTemperable(itemRecord: IInterface): IInterface;
 var
@@ -883,6 +902,7 @@ begin
   // return created tempering recipe, just in case
   Result := recipeTemper;
 end;
+
 // based on Skyrim - Remove invalid entries
 // removes invalid entries from containers and recipe items, from Leveled lists, NPCs and spells
 procedure removeInvalidEntries(rec: IInterface);
@@ -940,6 +960,7 @@ begin
     end;
   end;
 end;
+
 // removes keyword to the record, if it has one
 function removeKeyword(itemRecord: IInterface; keywordEditorID: string): boolean;
 var
@@ -965,4 +986,6 @@ begin
   end;
 
 end;
+
+
 end.
